@@ -1,2 +1,84 @@
-# api-integration
-Integration with APIs for Park-Prompt and other park-pliant services.
+# ParkPrompt - API Integration
+
+Our solutions support push of data via a flexible API.
+
+- All data is pushed through HTTPS POST "application/json" to our API.
+- All calls are authenticated via Basic authentication ("Authorization" header).
+- Each push can contain from 1 to 1000 records of data.
+- Our server will generally return one of the following responses
+  - 200 – OK
+    - This is a success response that means the transaction was accepted and queued for processing
+    - It will include "application/json" content with a transaction id from our server and count of records received.
+  - 204 - No Content
+    - The request was properly formatted except for an empty payload, the request was discarded.
+  - 400 – Bad Request
+    - The request was improperly formatted, the payload was discarded
+  - 401 – Unauthorized
+    - The request came without authentication or with invalid credentials
+
+----
+
+### Open API (Swagger) Documentation
+https://parkprompt.azurewebsites.net/api/swagger/ui
+
+## API Endpoints
+
+**Unpaid Post Service**
+
+https://parkprompt.azurewebsites.net/api/unpaid
+
+*The above endpoints accept only HTTPS POST requests with a content-type "application/json".  Attempting to visit them in your browser will usually result in a 404 or 405 error.*
+
+----
+
+### Example Request
+```yaml
+POST /api/unpaid HTTP/1.1
+Host: parkprompt.azurewebsites.net
+Connection: keep-alive
+Content-Length: <body-length>
+Authorization: Basic <base64(username:password)>
+Content-Type: application/json
+Accept: application/json, text/json
+
+[{
+    "location": "A007",
+    "plate": "BCE-1234",
+    "state": "AZ",
+    "make": "Toyota",
+    "body": "Truck",
+    "color": "Silver",
+    "amountDue": 10.00
+},{
+    "location": "Q301",
+    "plate": "CDF-1234",
+    "state": "ID",
+    "make": "GMC",
+    "body": "SUV",
+    "color": "Black",
+    "amountDue": 12.50
+}]
+```
+
+In the above example:
+- 2 unpaid vehicles were sent, sending 2 posts with one record each is also fine, though less efficient.  The post must always be an array ( [] in JSON ), even if the array only contains one element.
+
+----
+
+### Example Response
+```yaml
+HTTP/1.1 200 OK
+Content-Length: 55
+Content-Type: application/json; charset=utf-8
+
+{
+    "id": "c31deb20-1069-40c8-b218-e7f7e63ba56d",
+    "count": 2
+}
+```
+In the above example:
+- The `id` is a unique identifier supplied for the transaction, that can be used for transaction tracing.  We recommend recording this value when possible, although is it not required.	
+
+
+
+
