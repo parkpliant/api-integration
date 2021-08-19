@@ -13,6 +13,7 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
 | `color` | No | string | `Red` | The color of the vehicle. |
 | `vin` | No | string | `*5678` | Can contain the full vehicle VIN or the last 4 digits of the VIN if prefixed with `*`. |
 | `amountDue` | No | decimal | `10.00` | The unpaid amount due for the vehicle. |
+| `imageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the unpaid vehicle in the location. |
 
 ### Example
 
@@ -29,7 +30,8 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
     "make": "Toyota",
     "body": "Truck",
     "color": "Silver",
-    "amountDue": 10.00
+    "amountDue": 10.00,
+    "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ]
 },{
     "location": "Q301",
     "plate": "CDF-1234",
@@ -37,7 +39,11 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
     "make": "GMC",
     "body": "SUV",
     "color": "Black",
-    "amountDue": 12.50
+    "amountDue": 12.50,
+    "imageUrls": [ 
+        "https://my.site.net/plate-images/img76985.jpg", 
+        "https://blob.azure.com/my-company/unpaid/img84879.jpg"
+    ]
 }]
 ```
 
