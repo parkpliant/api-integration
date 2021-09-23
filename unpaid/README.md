@@ -13,6 +13,7 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
 | `color` | No | string | `Red` | The color of the vehicle. |
 | `vin` | No | string | `*5678` | Can contain the full vehicle VIN or the last 4 digits of the VIN if prefixed with `*`. |
 | `amountDue` | No | decimal | `10.00` | The unpaid amount due for the vehicle. |
+| `paymentUrl` | No | string | `https://my.url.net` | An internet accessible URL for the customer to make a payment. |
 | `imageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the unpaid vehicle in the location. |
 
 ### Example
@@ -31,6 +32,7 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
     "body": "Truck",
     "color": "Silver",
     "amountDue": 10.00,
+    "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234",
     "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ]
 },{
     "location": "Q301",
