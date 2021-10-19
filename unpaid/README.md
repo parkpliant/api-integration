@@ -15,6 +15,8 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
 | `amountDue` | No | decimal | `10.00` | The unpaid amount due for the vehicle. |
 | `paymentUrl` | No | string | `https://my.url.net` | An internet accessible URL for the customer to make a payment. |
 | `imageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the unpaid vehicle in the location. |
+| `referenceNum` | No | string | `C123456` | A reference number for the unpaid vehicle, usually a citation number issued from an internal system |
+| `referenceId` | No | string | `6B547-F4684` | An internal reference identifier, if required for the issuing system, to be used as an alternative to the reference number for future integration. |
 
 ### Example
 
@@ -42,6 +44,7 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
     "body": "SUV",
     "color": "Black",
     "amountDue": 12.50,
+    "referenceNum": "C123456",
     "imageUrls": [ 
         "https://my.site.net/plate-images/img76985.jpg", 
         "https://blob.azure.com/my-company/unpaid/img84879.jpg"
