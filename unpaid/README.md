@@ -13,7 +13,9 @@ The posting of unpaid vehicles is the basis for our services.  See below for the
 | `color` | No | string | `Red` | The color of the vehicle. |
 | `vin` | No | string | `*5678` | Can contain the full vehicle VIN or the last 4 digits of the VIN if prefixed with `*`. |
 | `amountDue` | No | decimal | `10.00` | The unpaid amount due for the vehicle. |
-| `paymentUrl` | No | string | `https://my.url.net` | An internet accessible URL for the customer to make a payment. |
+| `paymentUrl` | No | string | `https://my.url.net/` | An internet accessible URL for the customer to make a payment. This will be displayed on the default landing page. |
+| `diusputeUrl` | No | string | `https://my.url.net` | An internet accessible URL for the customer to submit a dispute. This will be displayed on the default landing page. |
+| `landingUrl` | No | string | `https://my.url.net` | An internet accessible URL to send the customer to, as an alternative to our default landing page.  `paymentUrl` and `disputeUrl` are not used if this is supplied. |
 | `imageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the unpaid vehicle in the location. |
 | `referenceNum` | No | string | `C123456` | A reference number for the unpaid vehicle, usually a citation number issued from an internal system |
 | `referenceId` | No* | string | `6B547-F4684` | An internal reference identifier, unique to your source system, to be used future updates.  Calls to update `Status` require a matching value. |
