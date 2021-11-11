@@ -23,13 +23,17 @@ https://parkprompt.azurewebsites.net/api/swagger/ui
 
 ## API Endpoints
 
-**Unpaid Post Service**
+**Citations Post Service**
 
-https://parkprompt.azurewebsites.net/api/unpaid
+https://parkprompt.azurewebsites.net/api/citations
 
 **Status Post Service**
 
 https://parkprompt.azurewebsites.net/api/status
+
+**Lots Post Service**
+
+https://parkprompt.azurewebsites.net/api/lots
 
 
 *The above endpoints accept only HTTPS POST requests with a content-type "application/json".  Attempting to visit them in your browser will usually result in a 404 or 405 error.*
@@ -38,7 +42,7 @@ https://parkprompt.azurewebsites.net/api/status
 
 ### Example Request
 ```yaml
-POST /api/unpaid HTTP/1.1
+POST /api/citations HTTP/1.1
 Host: parkprompt.azurewebsites.net
 Connection: keep-alive
 Content-Length: <body-length>
@@ -47,26 +51,33 @@ Content-Type: application/json
 Accept: application/json, text/json
 
 [{
-    "location": "A007",
-    "plate": "BCE-1234",
+    "lotCode": "A007",
+    "issued" : "2021-11-11T15:06:00-4:00",
+    "plate": "ABC1234",
+    "state": "WA",
+    "make": "Ford",
+    "amountdue" : 10.00,
+    "violation" : "Overtime"
+},{
+    "lotCode": "A007",
+    "issued" : "2021-11-01T02:00:00-7:00",
+    "plate": "BCE1234",
     "state": "AZ",
     "make": "Toyota",
     "body": "Truck",
     "color": "Silver",
-    "amountDue": 10.00
-},{
-    "location": "Q301",
-    "plate": "CDF-1234",
-    "state": "ID",
-    "make": "GMC",
-    "body": "SUV",
-    "color": "Black",
-    "amountDue": 12.50
+    "amountDue": 42.00,
+    "referenceId": "444354357435324",
+    "violation" : "No Advance Payment",
+    "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ],
+    "actionUrls" : {
+        "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
+    }
 }]
 ```
 
 In the above example:
-- 2 unpaid vehicles were sent, sending 2 posts with one record each is also fine, though less efficient.  The post must always be an array ( [] in JSON ), even if the array only contains one element.
+- 2 citations were sent, sending 2 posts with one record each is also fine, though less efficient.  The post must always be an array ( [] in JSON ), even if the array only contains one element.
 
 ----
 
@@ -78,7 +89,8 @@ Content-Type: application/json; charset=utf-8
 
 {
     "id": "c31deb20-1069-40c8-b218-e7f7e63ba56d",
-    "count": 2
+    "count": 2,
+    "errors": []
 }
 ```
 In the above example:
