@@ -60,7 +60,7 @@ Accept: application/json, text/json
     "plate": "ABC1234",
     "state": "WA",
     "make": "Ford",
-    "amountdue" : 10.00,
+    "amountDue" : 10.00,
     "violation" : "Overtime"
 },{
     "lotCode": "A007",
