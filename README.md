@@ -35,8 +35,12 @@ https://parkprompt.azurewebsites.net/api/status
 
 https://parkprompt.azurewebsites.net/api/lots
 
+**Callback Post Service**
 
-*The above endpoints accept only HTTPS POST requests with a content-type "application/json".  Attempting to visit them in your browser will usually result in a 404 or 405 error.*
+https://parkprompt.azurewebsites.net/api/callbacks
+
+
+*The endpoints above accept only HTTPS POST requests with a content-type "application/json".  Attempting to visit them in your browser will usually result in a 404 or 405 error.*
 
 ----
 
