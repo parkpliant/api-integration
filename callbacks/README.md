@@ -8,6 +8,7 @@ This service allows you to post callback URLs and an optional Authorization head
 | `authorization` | No | string | `Basic dXNlcjpwYXNz` | An optional HTTP Authorization header value, including the type (`Basic` or `Bearer`) to send on callbacks. |
 | `correctionUrl` | No | string | `https://my.uri.net/correct` | The absolute URL for us to post citation data corrections to.  See below |
 | `paymentUrl` | No | string | `https://my.uri.net/pay` | The absolute URL for us to post citation payment to.  See below |
+| `noticeUrl` | No | string | `https://my.uri.net/noitce` | The absolute URL for us to post notices of payment due (i.e. Letters).  See below |
 
 ### Example
 
@@ -15,7 +16,8 @@ This service allows you to post callback URLs and an optional Authorization head
 {
   "authorization": "Basic dXNlcjpwYXNz",
   "correctionUrl": "https://my.uri.net/correct",
-  "paymentUrl": "https://my.uri.net/pay"
+  "paymentUrl": "https://my.uri.net/pay",
+  "noticeUrl": "https://my.uri.net/noitce"
 }
 ```
  
@@ -80,4 +82,26 @@ We will post a JSON Array of citation corrections when data sent with the citati
 ```
 
 
- 
+## Notice
+We will post a JSON Array of sent notices to the parker or responsible party. This is the promary means of knowing when letters are sent.
+
+### Fields
+| Field | Required | Type/Format | Example(s) | Description|
+|-------|----------|-------------|---------|------------|
+| `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
+| `type` | Yes | string | `Letter` | The type of notice communication.  Usually `Letter`, other options such as `fax` or `email` may be supported in the future. |
+| `date` | Yes | string (date) | `2021-11-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, notice was sent.|
+| `contentUrl` | No | string | `https://storage.net/kfg354` | The full URL that can be requested to pull the content of the communication (usually a PDF).  Most content will be protected and require the same API credentials to be supplied. |
+
+
+### Example
+
+```yaml
+[{
+  "referenceId": "6B547-F4684",
+  "type": "Letter",
+  "date": "2021-11-15",
+  "contentUrl": "https://storage.net/kfg354",
+}]
+```
+
