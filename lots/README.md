@@ -20,15 +20,15 @@ The advance posting of lots is required to process Citations.  See below for the
 ```yaml
 [{
     "code": "A007",
-    "displayName" : "1st & Pine",
+    "displayName": "1st & Pine",
     "ianaTimezone": "America/Chicago"
 },{
     "code": "Q301",
-    "displayName" : "34th & Vine",
-    "address" : "123 N 34th St",
-    "city" : "Somewhere",
-    "state" : "CA",
-    "zip" : "78912",
+    "displayName": "34th & Vine",
+    "address": "123 N 34th St",
+    "city": "Somewhere",
+    "state": "CA",
+    "zip": "78912",
     "ianaTimezone": "America/Los_Angeles"
 }]
 ```

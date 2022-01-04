@@ -56,15 +56,15 @@ Accept: application/json, text/json
 
 [{
     "lotCode": "A007",
-    "issued" : "2021-11-11T15:06:00-4:00",
+    "issued": "2021-11-11T15:06:00-4:00",
     "plate": "ABC1234",
     "state": "WA",
     "make": "Ford",
-    "amountDue" : 10.00,
-    "violation" : "Overtime"
+    "amountDue": 10.00,
+    "violation": "Overtime"
 },{
     "lotCode": "A007",
-    "issued" : "2021-11-01T02:00:00-7:00",
+    "issued": "2021-11-01T02:00:00-7:00",
     "plate": "BCE1234",
     "state": "AZ",
     "make": "Toyota",
@@ -72,9 +72,9 @@ Accept: application/json, text/json
     "color": "Silver",
     "amountDue": 42.00,
     "referenceId": "444354357435324",
-    "violation" : "No Advance Payment",
+    "violation": "No Advance Payment",
     "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ],
-    "actionUrls" : {
+    "actionUrls": {
         "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
     }
 }]

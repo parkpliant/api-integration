@@ -27,15 +27,15 @@ The posting of citations is the basis for our services.  See below for the detai
 ```yaml
 [{
     "lotCode": "A007",
-    "issued" : "2021-11-11T15:06:00-4:00",
+    "issued": "2021-11-11T15:06:00-4:00",
     "plate": "ABC1234",
     "state": "WA",
     "make": "Ford",
-    "amountdue" : 10.00,
-    "violation" : "Overtime"
+    "amountdue": 10.00,
+    "violation": "Overtime"
 },{
     "lotCode": "A007",
-    "issued" : "2021-11-01T02:00:00-7:00",
+    "issued": "2021-11-01T02:00:00-7:00",
     "plate": "BCE1234",
     "state": "AZ",
     "make": "Toyota",
@@ -43,21 +43,21 @@ The posting of citations is the basis for our services.  See below for the detai
     "color": "Silver",
     "amountDue": 42.00,
     "referenceId": "444354357435324",
-    "violation" : "No Advance Payment",
+    "violation": "No Advance Payment",
     "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ],
-    "actionUrls" : {
+    "actionUrls": {
         "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
     }
 },{
     "lotCode": "Q301",
-    "issued" : "2021-11-10T22:00:00-6:00",
+    "issued": "2021-11-10T22:00:00-6:00",
     "plate": "CDF1234",
     "state": "ID",
     "make": "GMC",
     "body": "SUV",
     "color": "Black",
     "amountDue": 32.50,
-    "violation" : "Expired Permit",
+    "violation": "Expired Permit",
     "referenceNum": "C123456",
     "referenceId": "32573543574354364",
     "imageUrls": [ 
