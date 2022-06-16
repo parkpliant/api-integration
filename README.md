@@ -1,4 +1,4 @@
-# ParkPrompt - API Integration
+# ParkPliant - Push API Integration
 
 Our solutions support push of data via a flexible API.
 
@@ -19,25 +19,25 @@ Our solutions support push of data via a flexible API.
 ----
 
 ### Open API (Swagger) Documentation
-https://parkprompt.azurewebsites.net/api/swagger/ui
+https://push.parkpliant.com/api/swagger/ui
 
 ## API Endpoints
 
 **Citations Post Service**
 
-https://parkprompt.azurewebsites.net/api/citations
+https://push.parkpliant.com/api/citations
 
 **Status Post Service**
 
-https://parkprompt.azurewebsites.net/api/status
+https://push.parkpliant.com/api/status
 
 **Lots Post Service**
 
-https://parkprompt.azurewebsites.net/api/lots
+https://push.parkpliant.com/api/lots
 
 **Callback Post Service**
 
-https://parkprompt.azurewebsites.net/api/callbacks
+https://push.parkpliant.com/api/callbacks
 
 
 *The endpoints above accept only HTTPS POST requests with a content-type "application/json".  Attempting to visit them in your browser will usually result in a 404 or 405 error.*
@@ -47,7 +47,7 @@ https://parkprompt.azurewebsites.net/api/callbacks
 ### Example Request
 ```yaml
 POST /api/citations HTTP/1.1
-Host: parkprompt.azurewebsites.net
+Host: push.parkpliant.com
 Connection: keep-alive
 Content-Length: <body-length>
 Authorization: Basic <base64(username:password)>
