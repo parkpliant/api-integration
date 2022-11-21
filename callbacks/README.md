@@ -89,7 +89,7 @@ We will post a JSON Array of sent notices to the parker or responsible party. Th
 | Field | Required | Type/Format | Example(s) | Description|
 |-------|----------|-------------|---------|------------|
 | `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
-| `type` | Yes | string | `Letter` | The type of notice communication.  Usually `letter` or `sms`, other options such `email` may be supported in the future. |
+| `type` | Yes | string | `letter` | The type of notice communication.  Usually `letter` or `sms`, other options such `email` may be supported in the future. |
 | `date` | Yes | string (date) | `2021-11-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, notice was sent.|
 | `contentUrl` | No | string | `https://storage.net/kfg354` | The full URL that can be requested to pull the content of the communication (usually a PDF).  Most content will be protected and require the same API credentials to be supplied. |
 
