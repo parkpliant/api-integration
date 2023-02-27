@@ -24,6 +24,8 @@ The posting of citations is the basis for our services.  See below for the detai
 | `imageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the unpaid vehicle in the location. |
 | `actionUrls.paymentUrl` | No | string | `https://my.url.net/` | An internet accessible URL for the customer to make a payment. This will be displayed on the default landing page. |
 | `actionUrls.diusputeUrl` | No | string | `https://my.url.net` | An internet accessible URL for the customer to submit a dispute. This will be displayed on the default landing page. |
+| `group.id` | No | string | `825` | A short identifier for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
+| `group.name` | No | string | `San Diego` | The name for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
 
 ### Example
 
