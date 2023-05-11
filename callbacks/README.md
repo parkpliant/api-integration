@@ -83,7 +83,7 @@ We will post a JSON Array of citation corrections when data sent with the citati
 
 
 ## Notice
-We will post a JSON Array of sent notices to the parker or responsible party. This is the promary means of knowing when letters are sent.
+We will post a JSON Array of sent notices to the parker or responsible party. This is the primary means of knowing when letters are sent.
 
 ### Fields
 | Field | Required | Type/Format | Example(s) | Description|
@@ -92,6 +92,7 @@ We will post a JSON Array of sent notices to the parker or responsible party. Th
 | `type` | Yes | string | `letter` | The type of notice communication.  Usually `letter` or `sms`, other options such `email` may be supported in the future. |
 | `date` | Yes | string (date) | `2021-11-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, notice was sent.|
 | `contentUrl` | No | string | `https://storage.net/kfg354` | The full URL that can be requested to pull the content of the communication (usually a PDF).  Most content will be protected and require the same API credentials to be supplied. |
+| `deliverTo` | No | string | `33901` | Additional information about the notice delivery.  For `letter` this will contain the first 5-digits of the postal code. For `sms` this will contains the last 4-digits of the phone number. |
 
 
 ### Example

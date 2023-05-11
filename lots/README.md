@@ -1,6 +1,6 @@
 # Lots Post
 
-The advance posting of lots is required to process Citations.  See below for the detail of both required and supported fields.
+The advance posting of lots is required to process Citations.  See below for the detail of both required and supported fields.  Lots with the same `code` may be posted again to update the data.
 
 ### Fields
 | Field | Required | Type/Format | Example(s) | Description|
@@ -14,6 +14,7 @@ The advance posting of lots is required to process Citations.  See below for the
 | `zip` | No | string | `78912` | The zip or postal code of the lot address  |
 | `latitude` | No | decimal | `47.60621` | The latitude of the lot in decimal form |
 | `longitude` | No | decimal | `-122.33207` | The longitude of the lot in decimal form |
+| `signImageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the signage posted in the location. |
 | `group.id` | No | string | `825` | A short identifier for the group/market for large operator integration. |
 | `group.name` | No | string | `San Diego` | The name for the group/market for large operator integration. |
 
@@ -32,6 +33,9 @@ The advance posting of lots is required to process Citations.  See below for the
     "state": "CA",
     "zip": "78912",
     "ianaTimezone": "America/Los_Angeles",
+    "signImageUrls": [
+      "https://my.website.net/lot/a007/sign.jpg"
+    ]
     "group": {
         "id": "825",
         "name": "San Diego"
@@ -39,5 +43,5 @@ The advance posting of lots is required to process Citations.  See below for the
 }]
 ```
 
-
- 
+### About Images
+Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to immediacy download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.
