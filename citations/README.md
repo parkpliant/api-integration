@@ -26,6 +26,8 @@ The posting of citations is the basis for our services.  See below for the detai
 | `actionUrls.diusputeUrl` | No | string | `https://my.url.net` | An internet accessible URL for the customer to submit a dispute. This will be displayed on the default landing page. |
 | `group.id` | No | string | `825` | A short identifier for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
 | `group.name` | No | string | `San Diego` | The name for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
+| `schedule[].asOf` | Maybe | string | `2021-11-11T15:06:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the scheduled amount should be effective.|
+| `schedule[].totalDue` | Maybe | decimal | `20.00` | The total amount due on this citation as of the `asOf` date/time for this schedule entry.  This is a replacement value not an additive value. |
 
 ### Example
 
@@ -52,7 +54,11 @@ The posting of citations is the basis for our services.  See below for the detai
     "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ],
     "actionUrls": {
         "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
-    }
+    },
+    "schedule": [
+        { "asOf": "2021-11-01T02:00:00-7:00", "totalDue": 42.00 },
+        { "asOf": "2021-11-31T02:00:00-7:00", "totalDue": 57.00 }
+    ]
 },{
     "lotCode": "Q301",
     "issued": "2021-11-10T22:00:00-6:00",
@@ -68,6 +74,10 @@ The posting of citations is the basis for our services.  See below for the detai
     "imageUrls": [ 
         "https://my.site.net/plate-images/img76985.jpg", 
         "https://blob.azure.com/my-company/unpaid/img84879.jpg"
+    ],
+    "schedule": [
+        { "asOf": "2021-11-25T22:00:00-6:00", "totalDue": 65.00 },
+        { "asOf": "2021-12-25T22:00:00-6:00", "totalDue": 95.00 }
     ]
 }]
 
@@ -75,3 +85,8 @@ The posting of citations is the basis for our services.  See below for the detai
 
 ### About Images
 Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to immediacy download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.
+
+### About Schedules
+Schedules are an optional feature that can be used if you offer discounts for early payment, that expire after a period of time.  If you use the schedule feature, then both the `asOf` and `totalDue` are required for each entry.  There is no practical limit for the number of schedule entires supported for a Citation.  Scheduels are applied within an hour of the `asOf` time by our system.  Schedule entries may increase or reduce the amount due.  Any call to *Status*, with a new `amountDue`, will override the amount set by the latest applied schedule, but will not prevent future schedules from being applied.  
+
+You may supply a schedule entry for the issued date/time of the Citation with the initial amount due, or omit this an send only future changes.  Regardless, the `amountDue` on the Citation must be the currect amout due (with any early pay discounts) as of the time the Citation is sent to us.

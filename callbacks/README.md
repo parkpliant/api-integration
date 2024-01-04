@@ -111,3 +111,35 @@ We will post a JSON Array of sent notices to the parker or responsible party. Th
 }]
 ```
 
+
+## Dispute
+We will post a JSON Array of disputes submitted by the customer/parker on our dispute portal. Customers may post additional comments and attach files that can be viewed using the URL.
+
+### Fields
+| Field | Required | Type/Format | Example(s) | Description|
+|-------|----------|-------------|---------|------------|
+| `uuid` | Yes | string (uuid) | `9649c808-6f06-48d2-...` | The unique identifier for this dispute created by our portal. |
+| `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
+| `createdUtc` | Yes | string (timestamp) | `2023-12-22T13:44:07Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that the dispute was created.|
+| `reason` | Yes | string | `Already_Paid` | A code indicating a common dispute reason, options are `Not_My_Car`, `Already_Paid`, `Waived`, `Permit`, `Machine_Broken`, `Other`. |
+| `text` | No | string | | The full comment entered by the customer when the dispute was submitted. |
+| `privateUrl` | Yes | string | `https://dispute.net/1234567` | A URL for operator staff to view, comment and resolve the dispute. *DO NOT SHARE WITH CUSTOMER*. |
+| `customer.name` | No | string | `John Doe` | The name submitted by the customer when creating the dispute. |
+| `customer.email` | No | string | `johndoe@gmail.com` | The email address submitted by the customer when creating the dispute. |
+
+### Example
+
+```yaml
+[{
+  "uuid": "9649c808-6f06-48d2-a583-7cdcb1d2654d",
+  "referenceId": "6C558-F5692",
+  "createdUtc": "2023-12-22T13:44:07Z",
+  "reason": "Already_Paid",
+  "text": "I paid at via the mobile app when i parked.",
+  "url": "https://dispute.net/1234567",
+  "customer": {
+    "name": "John Doe",
+    "email": "johndoe@gmail.com"
+  }
+}]
+```
