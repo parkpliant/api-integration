@@ -121,11 +121,14 @@ We will post a JSON Array of disputes submitted by the customer/parker on our di
 | `uuid` | Yes | string (uuid) | `9649c808-6f06-48d2-...` | The unique identifier for this dispute created by our portal. |
 | `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
 | `createdUtc` | Yes | string (timestamp) | `2023-12-22T13:44:07Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that the dispute was created.|
+| `status` | Yes | string | `open` | The current status of the dispute: `open`, `uphold`, `void`, `reduce`, `moot`.  All disputes are initially `open` any other status is a closed status.
 | `reason` | Yes | string | `Already_Paid` | A code indicating a common dispute reason, options are `Not_My_Car`, `Already_Paid`, `Waived`, `Permit`, `Machine_Broken`, `Other`. |
 | `text` | No | string | | The full comment entered by the customer when the dispute was submitted. |
 | `privateUrl` | Yes | string | `https://dispute.net/1234567` | A URL for operator staff to view, comment and resolve the dispute. *DO NOT SHARE WITH CUSTOMER*. |
 | `customer.name` | No | string | `John Doe` | The name submitted by the customer when creating the dispute. |
 | `customer.email` | No | string | `johndoe@gmail.com` | The email address submitted by the customer when creating the dispute. |
+| `closedUtc` | No | string (timestamp) | `2024-01-15T19:01:307Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that the dispute was closed.|
+| `reduceTo` | No | decimal | `10.00` | The amount that was the operator reduced the amount owned to, if status is `reduce`. |
 
 ### Example
 
@@ -134,6 +137,7 @@ We will post a JSON Array of disputes submitted by the customer/parker on our di
   "uuid": "9649c808-6f06-48d2-a583-7cdcb1d2654d",
   "referenceId": "6C558-F5692",
   "createdUtc": "2023-12-22T13:44:07Z",
+  "status": "open",
   "reason": "Already_Paid",
   "text": "I paid at via the mobile app when i parked.",
   "url": "https://dispute.net/1234567",
