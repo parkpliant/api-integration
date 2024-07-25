@@ -8,7 +8,9 @@ This service allows you to post callback URLs and an optional Authorization head
 | `authorization` | No | string | `Basic dXNlcjpwYXNz` | An optional HTTP Authorization header value, including the type (`Basic` or `Bearer`) to send on callbacks. |
 | `correctionUrl` | No | string | `https://my.uri.net/correct` | The absolute URL for us to post citation data corrections to.  See below |
 | `paymentUrl` | No | string | `https://my.uri.net/pay` | The absolute URL for us to post citation payment to.  See below |
-| `noticeUrl` | No | string | `https://my.uri.net/noitce` | The absolute URL for us to post notices of payment due (i.e. Letters).  See below |
+| `noticeUrl` | No | string | `https://my.uri.net/notice` | The absolute URL for us to post notices of payment due (i.e. Letters).  See below |
+| `disputeUrl` | No | string | `https://my.uri.net/dispute` | The absolute URL for us to post dispute notifications.  See below |
+| `reassignmentUrl` | No | string | `https://my.uri.net/reassign` | The absolute URL for us to post reassignments to collection agencies.  See below |
 
 ### Example
 
@@ -17,7 +19,9 @@ This service allows you to post callback URLs and an optional Authorization head
   "authorization": "Basic dXNlcjpwYXNz",
   "correctionUrl": "https://my.uri.net/correct",
   "paymentUrl": "https://my.uri.net/pay",
-  "noticeUrl": "https://my.uri.net/noitce"
+  "noticeUrl": "https://my.uri.net/notice",
+  "disputeUrl": "https://my.uri.net/dispute",
+  "reassignmentUrl": "https://my.uri.net/reassign"
 }
 ```
  
@@ -145,5 +149,26 @@ We will post a JSON Array of disputes submitted by the customer/parker on our di
     "name": "John Doe",
     "email": "johndoe@gmail.com"
   }
+}]
+```
+
+## Reassignment
+We will post a JSON Array of citation reassignments when violation sis sent to a collection agent. 
+
+### Fields
+| Field | Required | Type/Format | Example(s) | Description|
+|-------|----------|-------------|---------|------------|
+| `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
+| `assignedUtc` | Yes | string (timestamp) | `2024-07-15T19:19:307Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that violation was reassigned and forwarded.|
+| `agency` | Yes | string | `Kinum` | The name of the collection agency or law firm. |
+
+
+### Example
+
+```yaml
+[{
+  "referenceId": "6B547-22988",
+  "createdUtc": "2024-07-15T19:19:307Z",
+  "agency": "Kinum"  
 }]
 ```
