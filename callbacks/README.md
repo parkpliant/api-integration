@@ -153,7 +153,7 @@ We will post a JSON Array of disputes submitted by the customer/parker on our di
 ```
 
 ## Reassignment
-We will post a JSON Array of citation reassignments when violation sis sent to a collection agent. 
+We will post a JSON Array of citation reassignments when violations are sent to a collection agent. 
 
 ### Fields
 | Field | Required | Type/Format | Example(s) | Description|
