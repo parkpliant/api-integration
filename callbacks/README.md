@@ -11,6 +11,7 @@ This service allows you to post callback URLs and an optional Authorization head
 | `noticeUrl` | No | string | `https://my.uri.net/notice` | The absolute URL for us to post notices of payment due (i.e. Letters).  See below |
 | `disputeUrl` | No | string | `https://my.uri.net/dispute` | The absolute URL for us to post dispute notifications.  See below |
 | `reassignmentUrl` | No | string | `https://my.uri.net/reassign` | The absolute URL for us to post reassignments to collection agencies.  See below |
+| `workedUrl` | No | string | `https://my.uri.net/worked` | The absolute URL for us to post when starting work on a Citation.  See below |
 
 ### Example
 
@@ -20,8 +21,9 @@ This service allows you to post callback URLs and an optional Authorization head
   "correctionUrl": "https://my.uri.net/correct",
   "paymentUrl": "https://my.uri.net/pay",
   "noticeUrl": "https://my.uri.net/notice",
-  "disputeUrl": "https://my.uri.net/dispute",
-  "reassignmentUrl": "https://my.uri.net/reassign"
+  "disputeUrl": null,
+  "reassignmentUrl": null,
+  "workedUrl": "https://my.uri.net/worked",
 }
 ```
  
@@ -169,7 +171,25 @@ We will post a JSON Array of citation reassignments when violations are sent to 
 ```yaml
 [{
   "referenceId": "6B547-22988",
-  "createdUtc": "2024-07-15T19:19:307Z",
+  "assignedUtc": "2024-07-15T19:19:307Z",
   "agency": "Kinum"  
+}]
+```
+
+## Worked
+We will post a JSON Array of worked events violations. 
+
+### Fields
+| Field | Required | Type/Format | Example(s) | Description|
+|-------|----------|-------------|---------|------------|
+| `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
+| `workedUtc` | Yes | string (timestamp) | `2024-07-15T19:19:307Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that violation was first worked.|
+
+### Example
+
+```yaml
+[{
+  "referenceId": "6B547-22988",
+  "workedUtc": "2024-07-15T19:19:307Z"
 }]
 ```
