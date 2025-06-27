@@ -68,7 +68,8 @@ Accept: application/json, text/json
     "state": "WA",
     "make": "Ford",
     "amountDue": 10.00,
-    "violation": "Overtime"
+    "violation": "Overtime",
+    "noticeOnVehicle":1
 },{
     "lotCode": "A007",
     "issued": "2021-11-01T02:00:00-7:00",
