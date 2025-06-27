@@ -96,7 +96,7 @@ The posting of citations is the basis for our services.  See below for the detai
     ],
     "schedule": [
         { "asOf": "2021-12-25T22:00:00-6:00", "totalDue": 65.00 },
-        { "asOf": "2021-13-25T22:00:00-6:00", "totalDue": 95.00 }
+        { "asOf": "2022-01-25T22:00:00-6:00", "totalDue": 95.00 }
     ],
         "lot": {
             "code": "FL1012",
