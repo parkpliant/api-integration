@@ -29,8 +29,6 @@ The posting of citations is the basis for our services.  See below for the detai
 | `schedule[].asOf` | Maybe | string || `2021-11-11T15:06:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the scheduled amount should be effective.|
 | `schedule[].totalDue` | Maybe | decimal || `20.00` | The total amount due on this citation as of the `asOf` date/time for this schedule entry.  This is a replacement value not an additive value. |
 | `NoticeOnVehicle`|Yes*|Int||1|Indicates if a paper notice was left on the vehicle. See below for details.|
-| `group.id` | No | string |50| 825 | A short identifier for the group/market for large operator integration. |
-| `group.name` | No | string |50| SanDiego | The name for the group/market for large operator integration. |
 |`lot`|No|Object|||The lot Object. Optional, but if included, see required fields below|
 | `lot.code`|Yes*|string|50|A007|The unique code for the lot in the source system(i.e.'L204).  This can but any length up to 50 characters|
 | `lot.DisplayName`|Yes*|string|50|1st and Pine|The display name of the location for customers (i.e. '1st & Pine')|
