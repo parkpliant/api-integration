@@ -42,7 +42,7 @@ The posting of citations is the basis for our services.  See below for the detai
 | `lot.Latitude`|No|Decimal|-180,180|47.60621|The latitude of the lot in decimal form|
 | `lot.Longitude`|No|Decimal|-180,180|-112.33207|The longitude of the lot in decimal form|
 
-*The lot detail where the citation was issud, if not using the Lots API, object is optional.  However, if provided, lot.code, lot.displayName, lot.State and lot.ianatimezone are required fields within the object.*
+*The lot detail where the citation was issued, if not using the Lots API, object is optional.  However, if provided, lot.code, lot.displayName, lot.State and lot.ianatimezone are required fields within the object.*
 
 
 ### Example
