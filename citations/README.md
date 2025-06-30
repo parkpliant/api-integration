@@ -5,7 +5,7 @@ The posting of citations is the basis for our services.  See below for the detai
 ### Fields
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
 |-------|----------|-------------|-------|---------|------------|
-| `lotCode` | Yes | string |50| `A007` | A name or code you use to indicate the location where the unpaid vehicle is parked. These codes will be exchanged ahead of time along with other location data using the [Lots](../lots) api. |
+| `lotCode` | Yes* | string |50| `A007` | A name or code you use to indicate the location where the unpaid vehicle is parked. These codes will be exchanged ahead of time along with other location data using the [Lots](../lots) api. |
 | `issued` | Yes | string || `2021-11-11T15:06:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the citation was issued.|
 | `plate` | Yes | string |20| `ABC-1234` | The license plate for the unpaid vehicle. |
 | `state` | Yes | string |2| `WA` | The state or province that issued the license plate. (see `plate`) |
@@ -29,7 +29,7 @@ The posting of citations is the basis for our services.  See below for the detai
 | `schedule[].asOf` | Maybe | string || `2021-11-11T15:06:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the scheduled amount should be effective.|
 | `schedule[].totalDue` | Maybe | decimal || `20.00` | The total amount due on this citation as of the `asOf` date/time for this schedule entry.  This is a replacement value not an additive value. |
 | `NoticeOnVehicle`|Yes*|Int||1|Indicates if a paper notice was left on the vehicle. See below for details.|
-|`lot`|No|Object|||The lot Object. Optional, but if included, see required fields below|
+|`lot`|Yes*|Object|||The lot Object. Required if lotCode is not present.  Both lotCode and Lot object is not allowed, needs to one or the other  |
 | `lot.code`|Yes*|string|50|A007|The unique code for the lot in the source system(i.e.'L204).  This can but any length up to 50 characters|
 | `lot.DisplayName`|Yes*|string|50|1st and Pine|The display name of the location for customers (i.e. '1st & Pine')|
 | `lot.Address`|No|string|100|123 N Street|The street address of the lot|
@@ -40,8 +40,15 @@ The posting of citations is the basis for our services.  See below for the detai
 | `lot.Latitude`|No|Decimal|-180,180|47.60621|The latitude of the lot in decimal form|
 | `lot.Longitude`|No|Decimal|-180,180|-112.33207|The longitude of the lot in decimal form|
 
-*The lot detail where the citation was issued, if not using the Lots API, object is optional.  However, if provided, lot.code, lot.displayName, lot.State and lot.ianatimezone are required fields within the object.*
+`*You must specify either the lotCode field or the lot object in your citation payload, but not both.`   
+- If you are using the Lots API, provide the lotCode string to indicate the location.
+- If you are not using the Lots API, provide the full lot object with required details.
+- `Including both` lotCode `and` lot `in the same citation is not permitted and will result in a 400 error`.
+- At least one (but not both) of these fields is required for each citation.
 
+"Either lotCode or lot collection are required, but cannot both be present in the collection. If both are part of the citation payload then a 400 error code will be returned in the response package..."
+
+The system will validate your submission and reject any citation that includes both fields or omits both, ensuring that only one method of specifying the lot location is used.
 
 ### Example
 
@@ -76,7 +83,6 @@ The posting of citations is the basis for our services.  See below for the detai
         { "asOf": "2021-11-31T02:00:00-7:00", "totalDue": 57.00 }
     ]
 },{
-    "lotCode": "FL1012",
     "issued": "2021-12-10T22:00:00-6:00",
     "plate": "CAF132",
     "state": "ID",
