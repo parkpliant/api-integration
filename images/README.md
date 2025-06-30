@@ -3,10 +3,10 @@
 This endpoint supports posting additional images to existing citations.  See below for the detail of both required and supported fields.
 
 ### Fields
-| Field | Required | Type/Format | Example(s) | Description|
-|-------|----------|-------------|---------|------------|
-| `referenceId` | Yes | string | `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citations post. |
-| `imageUrls` | No | string [] | *(below)* | An array of internet accessible URLs for images of the unpaid 
+| Field | Required | Type/Format |Max Len| Example(s) | Description|
+|-------|----------|-------------|---------|---------|------------|
+| `referenceId` | Yes | string |50| `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citations post. |
+| `imageUrls` | No | string [] |255| *(below)* | An array of internet accessible URLs for images of the unpaid 
 
 ### Example
 
