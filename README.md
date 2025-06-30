@@ -67,15 +67,16 @@ Accept: application/json, text/json
     "plate": "ABC1234",
     "state": "WA",
     "make": "Ford",
-    "amountDue": 10.00,
-    "violation": "Overtime",
-    "noticeOnVehicle":1
+    "noticeOnVehicle": 1,
+    "amountdue": 10.00,
+    "violation": "Overtime"
 },{
     "lotCode": "A007",
     "issued": "2021-11-01T02:00:00-7:00",
     "plate": "BCE1234",
     "state": "AZ",
     "make": "Toyota",
+    "noticeOnVehicle": 1,
     "body": "Truck",
     "color": "Silver",
     "amountDue": 42.00,
@@ -84,12 +85,45 @@ Accept: application/json, text/json
     "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ],
     "actionUrls": {
         "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
-    }
+    },
+    "schedule": [
+        { "asOf": "2021-11-01T02:00:00-7:00", "totalDue": 42.00 },
+        { "asOf": "2021-11-31T02:00:00-7:00", "totalDue": 57.00 }
+    ]
+},{
+    "issued": "2021-12-10T22:00:00-6:00",
+    "plate": "CAF132",
+    "state": "ID",
+    "make": "GMC",
+    "noticeOnVehicle": 0,
+    "body": "SUV",
+    "color": "Red",
+    "amountDue": 32.50,
+    "violation": "Expired Permit",
+    "referenceNum": "A123456",
+    "referenceId": "3274354364",
+    "imageUrls": [ 
+        "https://my.site.net/plate-images/img76925.jpg", 
+        "https://blob.azure.com/my-company/unpaid/img84279.jpg"
+    ],
+    "schedule": [
+        { "asOf": "2021-12-25T22:00:00-6:00", "totalDue": 65.00 },
+        { "asOf": "2022-01-25T22:00:00-6:00", "totalDue": 95.00 }
+    ],
+        "lot": {
+            "code": "FL1012",
+            "displayName": "2th and Vine",
+            "Address": "1375 East 2th Street",
+            "City": "Cleveland",
+            "State": "OH",
+            "Zip": "44113",
+            "ianaTimezone": "America/New_York"
+        }
 }]
 ```
 
 In the above example:
-- 2 citations were sent, sending 2 posts with one record each is also fine, though less efficient.  The post must always be an array ( [] in JSON ), even if the array only contains one element.
+- 3 citations were sent, sending 3 posts with one record each is also fine, though less efficient.  The post must always be an array ( [] in JSON ), even if the array only contains one element.
 
 ----
 
@@ -101,7 +135,7 @@ Content-Type: application/json; charset=utf-8
 
 {
     "id": "c31deb20-1069-40c8-b218-e7f7e63ba56d",
-    "count": 2,
+    "count": 3,
     "errors": []
 }
 ```
