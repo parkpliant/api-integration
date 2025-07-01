@@ -28,7 +28,7 @@ The posting of citations is the basis for our services.  See below for the detai
 | `group.name` | No | string |50| `San Diego` | The name for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
 | `schedule[].asOf` | Maybe | string || `2021-11-11T15:06:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the scheduled amount should be effective.|
 | `schedule[].totalDue` | Maybe | decimal || `20.00` | The total amount due on this citation as of the `asOf` date/time for this schedule entry.  This is a replacement value not an additive value. |
-| `NoticeOnVehicle`|Yes**|bool||yes|Indicates if a paper notice was left on the vehicle. See below for details.|
+| `NoticeOnVehicle`|No**|bool|||Indicates if a paper notice was left on the vehicle. See below for details.|
 |`lot`|Yes*|Object|||The lot Object. Required if lotCode is not present.  Both lotCode and Lot object is not allowed, needs to one or the other  |
 | `lot.code`|Yes*|string|50|A007|The unique code for the lot in the source system(i.e.'L204).  This can but any length up to 50 characters|
 | `lot.DisplayName`|Yes*|string|50|1st and Pine|The display name of the location for customers (i.e. '1st & Pine')|
