@@ -164,7 +164,7 @@ We will post a JSON Array of citation reassignments when violations are sent to 
 |-------|----------|-------------|---------|---------|------------|
 | `referenceId` | Yes | string |50| `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
 | `assignedUtc` | Yes | string (timestamp) |20| `2024-07-15T19:19:307Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that violation was reassigned and forwarded.|
-| `agency` | Yes | string |100| `Kinum` | The name of the collection agency or law firm. |
+| `agency` | Yes | string |100| `CollectAgency` | The name of the collection agency or law firm. |
 
 
 ### Example
