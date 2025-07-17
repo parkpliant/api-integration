@@ -52,7 +52,7 @@ The system will validate your submission and reject any citation that includes b
 
 ** NoticeOnVehcile
 -  set to `true` if paper notice left on vehicle
--  set to `'false` if LPR(AE) issued notice, and NO paper notice left on vehicle 
+-  set to `false` if LPR(AE) issued notice, and NO paper notice left on vehicle 
 
 ### Example
 
