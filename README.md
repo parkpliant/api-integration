@@ -67,7 +67,7 @@ Accept: application/json, text/json
     "plate": "ABC1234",
     "state": "WA",
     "make": "Ford",
-    "noticeOnVehicle": 1,
+    "noticeOnVehicle": true,
     "amountdue": 10.00,
     "violation": "Overtime"
 },{
@@ -76,7 +76,7 @@ Accept: application/json, text/json
     "plate": "BCE1234",
     "state": "AZ",
     "make": "Toyota",
-    "noticeOnVehicle": 1,
+    "noticeOnVehicle": true,
     "body": "Truck",
     "color": "Silver",
     "amountDue": 42.00,
@@ -95,7 +95,7 @@ Accept: application/json, text/json
     "plate": "CAF132",
     "state": "ID",
     "make": "GMC",
-    "noticeOnVehicle": 0,
+    "noticeOnVehicle": false,
     "body": "SUV",
     "color": "Red",
     "amountDue": 32.50,
