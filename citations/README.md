@@ -51,8 +51,8 @@ The posting of citations is the basis for our services.  See below for the detai
 The system will validate your submission and reject any citation that includes both fields or omits both, ensuring that only one method of specifying the lot location is used.
 
 ** NoticeOnVehcile
--  set to `'yes'` if paper notice left on vehicle
--  set to `'no'` if LPR(AE) issued notice, and NO paper notice left on vehicle 
+-  set to `true` if paper notice left on vehicle
+-  set to `'false` if LPR(AE) issued notice, and NO paper notice left on vehicle 
 
 ### Example
 
@@ -63,7 +63,7 @@ The system will validate your submission and reject any citation that includes b
     "plate": "ABC1234",
     "state": "WA",
     "make": "Ford",
-    "noticeOnVehicle": 1,
+    "noticeOnVehicle": true,
     "amountdue": 10.00,
     "violation": "Overtime"
 },{
@@ -72,7 +72,7 @@ The system will validate your submission and reject any citation that includes b
     "plate": "BCE1234",
     "state": "AZ",
     "make": "Toyota",
-    "noticeOnVehicle": 1,
+    "noticeOnVehicle": true,
     "body": "Truck",
     "color": "Silver",
     "amountDue": 42.00,
@@ -91,7 +91,7 @@ The system will validate your submission and reject any citation that includes b
     "plate": "CAF132",
     "state": "ID",
     "make": "GMC",
-    "noticeOnVehicle": 1,
+    "noticeOnVehicle": false,
     "body": "SUV",
     "color": "Red",
     "amountDue": 32.50,
