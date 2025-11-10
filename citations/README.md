@@ -23,7 +23,7 @@ The posting of citations is the basis for our services.  See below for the detai
 | `lotExitTime` | No | string || `2021-11-11T15:05:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the vehicle existed the lot. |
 | `imageUrls` | No | string [] |255| *(below)* | An array of internet accessible URLs for images of the unpaid vehicle in the location. |
 | `actionUrls.paymentUrl` | No | string |255| `https://my.url.net/` | An internet accessible URL for the customer to make a payment. This will be displayed on the default landing page. |
-| `actionUrls.diusputeUrl` | No | string |255| `https://my.url.net` | An internet accessible URL for the customer to submit a dispute. This will be displayed on the default landing page. |
+| `actionUrls.disputeUrl` | No | string |255| `https://my.url.net` | An internet accessible URL for the customer to submit a dispute. This will be displayed on the default landing page. |
 | `group.id` | No | string |50| `825` | A short identifier for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
 | `group.name` | No | string |50| `San Diego` | The name for the group/market for large operator integration. If supplied, this needs to match the value on the Lot. |
 | `schedule[].asOf` | Maybe | string || `2021-11-11T15:06:00-4:00` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local time stamp, including UTC offset, when the scheduled amount should be effective.|
