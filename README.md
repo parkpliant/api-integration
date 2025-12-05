@@ -69,7 +69,7 @@ Accept: application/json, text/json
     "issued": "2021-11-11T15:06:00-4:00",
     "plate": "ABC1234",
     "state": "WA",
-    "make": "Ford",
+    "make": "FORD",
     "noticeOnVehicle": true,
     "amountdue": 10.00,
     "violation": "Overtime"
@@ -78,7 +78,7 @@ Accept: application/json, text/json
     "issued": "2021-11-01T02:00:00-7:00",
     "plate": "BCE1234",
     "state": "AZ",
-    "make": "Toyota",
+    "make": "TOYOTA",
     "noticeOnVehicle": true,
     "body": "Truck",
     "color": "Silver",
