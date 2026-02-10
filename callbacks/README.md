@@ -2,7 +2,7 @@
 
 This service enables posting callback URLs and an optional Authorization header to receive updates on citations.
 
-# Post Configuration
+## Post Configuration
 
 Configure webhook endpoints for various citation events. All URLs must be absolute and support HTTPS.
 
@@ -20,7 +20,7 @@ Configure webhook endpoints for various citation events. All URLs must be absolu
 
 ### Example
 
-```yaml
+```json
 {
   "authorization": "Basic dXNlcjpwYXNz",
   "correctionUrl": "https://my.uri.net/correct",
@@ -51,7 +51,7 @@ We will post a JSON Array of payment updates, when we receive and process paymen
 
 ### Example
 
-```yaml
+```json
 [{
   "referenceId": "6B547-F4684",
   "date": "2021-11-15",
@@ -82,7 +82,7 @@ We will post a JSON Array of citation corrections when data sent with the citati
 
 ### Example
 
-```yaml
+```json
 [{
   "referenceId": "6B547-F4684",
   "plate": "ABC123",
@@ -114,7 +114,7 @@ We will post a JSON Array of sent notices to the parker or responsible party. Th
 
 ### Example
 
-```yaml
+```json
 [{
   "referenceId": "6B547-F4684",
   "type": "letter",
@@ -153,7 +153,7 @@ We will post a JSON Array of disputes submitted by the customer/parker on our di
 
 ### Example
 
-```yaml
+```json
 [{
   "uuid": "9649c808-6f06-48d2-a583-7cdcb1d2654d",
   "referenceId": "6C558-F5692",
@@ -182,7 +182,7 @@ We will post a JSON Array of citation reassignments when violations are sent to 
 
 ### Example
 
-```yaml
+```json
 [{
   "referenceId": "6B547-22988",
   "assignedUtc": "2024-07-15T19:19:307Z",
@@ -201,7 +201,7 @@ We will post a JSON Array of worked events violations.
 
 ### Example
 
-```yaml
+```json
 [{
   "referenceId": "6B547-22988",
   "workedUtc": "2024-07-15T19:19:307Z"
