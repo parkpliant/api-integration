@@ -1,8 +1,12 @@
-# Callbacks Post
+# Callbacks Overview
 
-This service allows you to post callback URLs and an optional Authorization header for updates.
+This service enables posting callback URLs and an optional Authorization header to receive updates on citations.
 
-### Fields
+# Post Configuration
+
+Configure webhook endpoints for various citation events. All URLs must be absolute and support HTTPS.
+
+### Configuration Fields
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
 |-------|----------|-------------|---------|---------|------------|
 | `authorization` | No | string |1024| `Basic dXNlcjpwYXNz` | An optional HTTP Authorization header value, including the type (`Basic` or `Bearer`) to send on callbacks. |
@@ -42,7 +46,8 @@ We will post a JSON Array of payment updates, when we receive and process paymen
 | `referenceId` | Yes | string |50| `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
 | `date` | Yes | string (date) |20| `2021-11-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, payment was processed.|
 | `amount` | Yes | decimal |-9999,9999| `10.00` | The amount that was paid toward the citation. |
-
+| `transactionId`| Yes | string|50|`pi_3SwCJYIPGx8Vy2Xr0DL0mihB`| The unique transactionId|
+| `source` | Yes| string|50|`parkpliant`| The payment source (e.g.,parkpliant, collection)|
 
 ### Example
 
@@ -50,11 +55,15 @@ We will post a JSON Array of payment updates, when we receive and process paymen
 [{
   "referenceId": "6B547-F4684",
   "date": "2021-11-15",
-  "amount": 22.50  
+  "amount": 22.50,
+  "transactionId": "pi_3SwCJYIPGx8Vy2Xr0DL0mihB",
+  "source": "parkpliant"  
 },{
   "referenceId": "8CC21-BB433",
   "date": "2021-11-15",
-  "amount": 10.00
+  "amount": 10.00,
+  "transactionId": "pi_3Sw32Xr0DL0mihB",
+  "source": "collection"  
 }]
 ```
 
@@ -111,11 +120,15 @@ We will post a JSON Array of sent notices to the parker or responsible party. Th
   "type": "letter",
   "date": "2021-11-15",
   "contentUrl": "https://storage.net/kfg354",
+  "deliverTo": "99201",
+  "sequence": 2
 },{
   "referenceId": "6C558-F5692",
   "type": "letter",
   "date": "2021-11-15",
   "contentUrl": "https://storage.net/kfg355",
+  "deliverTo": "99201",
+  "sequence": 1
 }]
 ```
 
