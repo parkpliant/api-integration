@@ -47,7 +47,7 @@ We will post a JSON Array of payment updates, when we receive and process paymen
 | `date` | Yes | string (date) |20| `2021-11-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, payment was processed.|
 | `amount` | Yes | decimal |-9999,9999| `10.00` | The amount that was paid toward the citation. |
 | `transactionId`| Yes | string|50|`pi_3SwCJYIPGx8Vy2Xr0DL0mihB`| The unique transactionId|
-| `source` | Yes| string|50|`parkpliant`| The payment source (e.g.,parkpliant, collection)|
+| `source` | Yes| string|50|`parkpliant`| The payment source (e.g., parkpliant, collection)|
 
 ### Example
 
