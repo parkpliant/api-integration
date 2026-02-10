@@ -4,7 +4,7 @@ This service enables posting callback URLs and an optional Authorization header 
 
 ## Post Configuration
 
-Configure webhook endpoints for various citation events. All URLs must be absolute and support HTTPS.
+Configure webhook endpoints for various citation events. All provided URLs must be absolute and support HTTPS; optional URL fields may be set to null when not in use.
 
 ### Configuration Fields
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
