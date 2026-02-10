@@ -161,7 +161,7 @@ We will post a JSON Array of disputes submitted by the customer/parker on our di
   "status": "open",
   "reason": "Already_Paid",
   "text": "I paid at via the mobile app when i parked.",
-  "privateurl": "https://dispute.net/1234567",
+  "privateUrl": "https://dispute.net/1234567",
   "customer": {
     "name": "John Doe",
     "email": "johndoe@gmail.com"
