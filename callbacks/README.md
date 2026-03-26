@@ -284,7 +284,7 @@ We will post a JSON Array of undeliverable events when a mailed notice is return
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
 |-------|----------|-------------|---------|---------|------------|
 | `referenceId` | Yes | string |50| `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
-| `undeliverableDate` | Yes | string (date) |10| `2024-07-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, that the letter was reported undeliverable by the postal carrier. |
+| `date` | Yes | string (date) |10| `2024-07-15` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date stamp, that the letter was reported undeliverable by the postal carrier. |
 | `reason` | No | string |255| `Attempted - No Access to Delivery Location` | Free-text reason provided by the postal carrier.  May be `null` if no reason was given. |
 | `sequence` | Yes | number || 1 | The letter number in the mailing sequence for this citation (e.g. 1 = first notice, 2 = second notice). |
 
@@ -293,12 +293,12 @@ We will post a JSON Array of undeliverable events when a mailed notice is return
 ```json
 [{
   "referenceId": "6B547-22988",
-  "undeliverableDate": "2024-07-15",
+  "date": "2024-07-15",
   "reason": "Attempted - No Access to Delivery Location",
   "sequence": 1
 },{
   "referenceId": "8CC21-BB433",
-  "undeliverableDate": "2024-07-18",
+  "date": "2024-07-18",
   "reason": "Vacant - Uncollectable",
   "sequence": 2
 }]
