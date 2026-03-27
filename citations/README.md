@@ -118,10 +118,67 @@ The posting of citations is the basis for our services. See below for details of
 
 ```
 
+### Error Responses
+
+In addition to the [standard HTTP error codes](../README.md#error-responses), individual records in a batch may fail validation. Failed records are returned in the `errors` array of a `200 OK` response while valid records are still processed.
+
+#### Model Validation Errors
+These errors occur when submitted field values do not meet format, length, or type requirements.
+
+| Error Message | Cause |
+|---------------|-------|
+| `Issued is required` | The `issued` timestamp is missing or is before the Unix epoch. |
+| `Plate is required unless State='UL' and Vin.length >= 17` | No license plate provided, and the record does not qualify for VIN-only identification. |
+| `Cannot define both Lot and LotCode` | Both `lotCode` and the `lot` object were provided. Only one is allowed. |
+| `Lot or LotCode (not both) is required` | Neither `lotCode` nor the `lot` object was provided. |
+| `'{value}' is not a valid IANA time zone` | The `lot.ianaTimezone` value is not a recognized [IANA time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). |
+| `ImageUrls[{i}] is not an absolute, https Uri, or data Uri` | An image URL is not a valid absolute HTTPS URL or data URI. |
+| `{field} is null or empty` | A required field (`state`, `violation`, `amountDue`, etc.) was not provided. |
+| `{field} is greater than allowed {max} chars` | A string field exceeds its maximum length. |
+| `{field} is less than required {min} chars` | A string field is shorter than the minimum length. |
+| `{field} is not withing the allowed range of {min} to {max}` | A numeric field is outside its allowed range (e.g., `amountDue` outside 0.01–9999.99). |
+| `{field} is not an absolute, https Uri` | A URL field (`actionUrls.paymentUrl`, `actionUrls.disputeUrl`) is not a valid absolute HTTPS URL. |
+
+#### Business Logic Errors
+These errors occur after model validation, during processing against existing data.
+
+| Error Message | Cause |
+|---------------|-------|
+| `Invalid or missing Plate/State` | The plate/state combination could not be validated or normalized. |
+| `Lot '{lotCode}' not found` | The referenced `lotCode` does not exist. Post the lot via the [Lots](../lots) API first. |
+| `Lot '{lotCode}' create conflict` | A race condition occurred while auto-creating a lot. Retry the request. |
+| `Missing Lot Info` | The `lot` object is present but missing required fields (`code`, `displayName`, `ianaTimezone`). |
+| `Duplicate ReferenceId '{referenceId}'` | A citation with this `referenceId` already exists for your account. |
+| `Duplicate UUID '{violationUid}'` | An internal duplicate was detected. |
+| `Inaccessible Image URL '{url}'` | The image URL could not be reached or downloaded (when `?storeImages=true`). |
+
+#### Example Error Response
+
+```yaml
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+    "id": "a7b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "count": 1,
+    "errors": [{
+        "index": 1,
+        "ref": "DUPLICATE-REF-001",
+        "error": "Duplicate ReferenceId 'DUPLICATE-REF-001'"
+    },{
+        "index": 2,
+        "ref": null,
+        "error": "Lot or LotCode (not both) is required"
+    }]
+}
+```
+
 ### About Images
 Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.
 
 ### About Schedules
-Schedules are an optional feature that can be used if you offer discounts for early payment, that expire after a period of time.  If you use the schedule feature, then both the `asOf` and `totalDue` are required for each entry.  There is no practical limit for the number of schedule entires supported for a Citation.  Scheduels are applied within an hour of the `asOf` time by our system.  Schedule entries may increase or reduce the amount due.  Any call to *Status*, with a new `amountDue`, will override the amount set by the latest applied schedule, but will not prevent future schedules from being applied.  
+Schedules are an optional feature that can be used if you offer discounts for early payment, that expire after a period of time.  If you use the schedule feature, then both the `asOf` and `totalDue` are required for each entry.  There is no practical limit for the number of schedule entires supported for a Citation.  Scheduels are applied within an hour of the `asOf` time by our system.  Schedule entries may increase or reduce the amount due.  Any call to *Status*, with a new `amountDue`, will override the amount set by the latest applied schedule, but will not prevent future schedules from being applied.
 
 You may supply a schedule entry for the issued date/time of the Citation with the initial amount due, or omit this an send only future changes.  Regardless, the `amountDue` on the Citation must be the currect amout due (with any early pay discounts) as of the time the Citation is sent to us.
+
+> **Note**: Schedules can also be managed independently after a citation has been posted, using the [Schedules](../schedules) API endpoint.

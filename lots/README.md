@@ -43,5 +43,46 @@ The advance posting of lots is required to process Citations.  See below for the
 }]
 ```
 
+### Error Responses
+
+In addition to the [standard HTTP error codes](../README.md#error-responses), individual records in a batch may fail validation. Failed records are returned in the `errors` array of a `200 OK` response while valid records are still processed.
+
+#### Model Validation Errors
+
+| Error Message | Cause |
+|---------------|-------|
+| `Code is null or empty` | The `code` field was not provided. |
+| `DisplayName is null or empty` | The `displayName` field was not provided. |
+| `IanaTimezone is null or empty` | The `ianaTimezone` field was not provided. |
+| `'{value}' is not a valid IANA time zone` | The `ianaTimezone` value is not a recognized [IANA time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). |
+| `SignImageUrls[{i}] is not an absolute, https Uri, or data Uri` | A sign image URL is not a valid absolute HTTPS URL or data URI. |
+| `{field} is greater than allowed {max} chars` | A string field exceeds its maximum length (e.g., `code` over 50 chars). |
+| `{field} is less than required {min} chars` | A string field is shorter than its minimum length. |
+| `{field} is not withing the allowed range of {min} to {max}` | `latitude` or `longitude` is outside the range of -180 to 180. |
+
+#### Business Logic Errors
+
+| Error Message | Cause |
+|---------------|-------|
+| `Missing Lot Code` | The lot code could not be resolved after normalization. |
+| `Inaccessible Image URL '{url}'` | A sign image URL could not be reached or downloaded (when `?storeImages=true`). |
+
+#### Example Error Response
+
+```yaml
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+    "id": "d4e5f6a7-b8c9-0123-defg-h45678901234",
+    "count": 1,
+    "errors": [{
+        "index": 0,
+        "ref": null,
+        "error": "'US/Pacific' is not a valid IANA time zone"
+    }]
+}
+```
+
 ### About Images
 Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to immediacy download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.

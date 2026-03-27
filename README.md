@@ -36,6 +36,18 @@ https://push.parkpliant.com/api/citations
 
 https://push.parkpliant.com/api/status
 
+**Schedules Post Service**
+
+https://push.parkpliant.com/api/schedules
+
+**Details Post Service**
+
+https://push.parkpliant.com/api/details
+
+**Letters Post Service**
+
+https://push.parkpliant.com/api/letters
+
 **Lots Post Service**
 
 https://push.parkpliant.com/api/lots
@@ -51,6 +63,79 @@ https://push.parkpliant.com/api/images
 **Query Get Service**
 
 https://push.parkpliant.com/api/query
+
+----
+
+### Error Responses
+
+All POST endpoints return errors in a consistent format. The `errors` array within a `200 OK` response contains per-record validation failures. Other HTTP status codes indicate request-level failures.
+
+#### 200 OK — Partial Success
+When some records in a batch fail validation, the response still returns `200 OK`. Successfully processed records are counted, and failed records appear in the `errors` array.
+
+```yaml
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+    "id": "c31deb20-1069-40c8-b218-e7f7e63ba56d",
+    "count": 2,
+    "errors": [{
+        "index": 1,
+        "ref": "6B547-F4684",
+        "error": "Lot 'INVALID' not found"
+    }]
+}
+```
+
+| Field    | Description |
+|----------|-------------|
+| `index`  | Zero-based position of the failed record in the submitted array. |
+| `ref`    | The `referenceId` from the failed record, if available. |
+| `error`  | A human-readable description of the validation failure. |
+
+#### 204 No Content
+The request was properly formatted but the payload was empty or contained only whitespace. No data was processed.
+
+#### 400 Bad Request
+The request body could not be parsed as valid JSON.
+
+```yaml
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=utf-8
+
+{
+    "error": "Unexpected character encountered while parsing value: x. Path '', line 0, position 0."
+}
+```
+
+#### 401 Unauthorized
+The request was missing the `Authorization` header or contained invalid credentials.
+
+```yaml
+HTTP/1.1 401 Unauthorized
+```
+
+#### 404 Not Found
+Returned by select endpoints (Details, Query) when the referenced citation does not exist.
+
+```yaml
+HTTP/1.1 404 Not Found
+```
+
+#### 500 Internal Server Error
+An unexpected error occurred during processing. The response includes diagnostic information.
+
+```yaml
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json; charset=utf-8
+
+{
+    "error": "Unexpected Error",
+    "exception": "...",
+    "stackTrace": "..."
+}
+```
 
 ----
 

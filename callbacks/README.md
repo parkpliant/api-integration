@@ -25,9 +25,36 @@ This service allows you to post callback URLs and an optional Authorization head
   "disputeUrl": null,
   "reassignmentUrl": null,
   "workedUrl": "https://my.uri.net/worked",
+  "closedUrl": "https://my.uri.net/closed"
 }
 ```
- 
+
+### Error Responses
+
+In addition to the [standard HTTP error codes](../README.md#error-responses), the following validation errors may be returned in a `400 Bad Request` response.
+
+| Error Message | Cause |
+|---------------|-------|
+| `{field} is not an absolute, https Uri` | A callback URL field is not a valid absolute HTTPS URL. |
+| `Authorization is greater than allowed 1024 chars` | The `authorization` header value exceeds the maximum length. |
+| `{field} is greater than allowed 255 chars` | A URL field exceeds the maximum length. |
+
+#### Example Error Response
+
+```yaml
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+    "success": false,
+    "errors": [{
+        "error": "paymentUrl is not an absolute, https Uri"
+    }]
+}
+```
+
+> **Note**: The Callbacks endpoint also supports a `GET` request to retrieve the current callback configuration. A `200 OK` returns the current settings; a `204 No Content` indicates no callbacks have been configured.
+
 ---
 
 
@@ -178,7 +205,7 @@ We will post a JSON Array of citation reassignments when violations are sent to 
 ```
 
 ## Worked
-We will post a JSON Array of worked events violations. 
+We will post a JSON Array of worked events violations.
 
 ### Fields
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
@@ -192,5 +219,23 @@ We will post a JSON Array of worked events violations.
 [{
   "referenceId": "6B547-22988",
   "workedUtc": "2024-07-15T19:19:307Z"
+}]
+```
+
+## Closed
+We will post a JSON Array of closed events when a citation has been fully resolved and closed in our system.
+
+### Fields
+| Field | Required | Type/Format |Max Len| Example(s) | Description|
+|-------|----------|-------------|---------|---------|------------|
+| `referenceId` | Yes | string |50| `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
+| `closedUtc` | Yes | string (timestamp) |20| `2024-08-01T12:00:00Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that the citation was closed.|
+
+### Example
+
+```yaml
+[{
+  "referenceId": "6B547-22988",
+  "closedUtc": "2024-08-01T12:00:00Z"
 }]
 ```

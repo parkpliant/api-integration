@@ -35,15 +35,66 @@ Updates the status of a previously posted citation. Any status other than `Open`
 },{
   "referenceId": "8CC21-BB433",
   "newStatus": "Paid",
-  "payments": [{ 
+  "payments": [{
     "date": "2021-08-30",
-    "amount": 10.00 
-  },{ 
+    "amount": 10.00
+  },{
     "date": "2021-09-15",
-    "amount": 15.00 
+    "amount": 15.00
   }]
 }]
+```
 
+### Payment Processing Notes
 
+- When `newStatus` is `Paid` and only `paidAmount` is provided, a single payment record is inferred from the amount.
+- When `newStatus` is `Paid` and `payments` is provided, individual payment records are created. Duplicate payments (matching amount and date) are skipped.
+- When `newStatus` is `Paid` with no `paidAmount` or `payments`, the full outstanding balance is assumed paid.
+- Setting `newStatus` to `Void` or `Hold` halts all further processing on the citation.
+- Setting `newStatus` back to `Open` with a new `amountDue` reactivates the citation at the updated amount.
 
- 
+### Error Responses
+
+In addition to the [standard HTTP error codes](../README.md#error-responses), individual records in a batch may fail validation. Failed records are returned in the `errors` array of a `200 OK` response while valid records are still processed.
+
+#### Model Validation Errors
+
+| Error Message | Cause |
+|---------------|-------|
+| `ReferenceId is null or empty` | The `referenceId` field was not provided. |
+| `NewStatus is not valid` | The `newStatus` value is not one of `Open`, `Hold`, `Paid`, or `Void`. |
+| `AmountDue is not withing the allowed range of 0 to 9999` | The `amountDue` value is outside the allowed range. |
+| `PaidAmount is not withing the allowed range of 0 to 9999` | The `paidAmount` value is outside the allowed range. |
+| `{field} is null or empty` | A required field within a `payments` entry is missing. |
+| `Amount is not withing the allowed range of -9999 to 9999` | A payment amount is outside the allowed range. |
+
+#### Business Logic Errors
+
+| Error Message | Cause |
+|---------------|-------|
+| `Invalid NewStatus` | The `newStatus` value could not be parsed to a valid status enum. |
+| `Citation not found` | No citation matches the provided `referenceId` for your account. |
+| `Citation already Closed or Voided` | The citation has already been closed or voided and cannot be updated. |
+| `Cannot increase AmountDue for Citation in Collection` | The citation has been assigned to a collection agency; the amount due cannot be increased. |
+
+#### Example Error Response
+
+```yaml
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+    "id": "b8c3d4e5-f6a7-8901-bcde-f12345678901",
+    "count": 1,
+    "errors": [{
+        "index": 0,
+        "ref": "UNKNOWN-REF",
+        "error": "Citation not found"
+    },{
+        "index": 2,
+        "ref": "6B547-F4684",
+        "error": "Citation already Closed or Voided"
+    }]
+}
+```
+
