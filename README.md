@@ -18,6 +18,18 @@ Our solutions support push of data via a flexible API.
 
 ----
 
+## Integration Quickstart
+
+Typical order of operations for a new integration:
+
+1. **Register your callback URLs** via [POST /callbacks](callbacks).  Sandbox callback registration is independent of production — when you move to production, you will register your URLs again against the production base URL.
+2. **Register lots** via [POST /lots](lots), or include a `lot` object on the first citation for that lot.  A lot must exist (in either form) before its first citation is accepted.
+3. **Push citations** via [POST /citations](citations).
+4. **Send Status updates** via [POST /status](status) when the state of a citation changes in your system (paid, voided, amount adjusted, on hold, etc.).
+5. **Handle inbound callbacks** for events that occur on our side.  At minimum we recommend implementing the **Payment**, **Correction**, and **Closed** callbacks — see [Callbacks](callbacks) for the full list and recommended-minimum guidance.
+
+----
+
 ### Open API (Swagger) Documentation
 https://push.sandbox.parkpliant.com/api/swagger/ui (Sandbox)
 
@@ -143,7 +155,57 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 In the above example:
-- The `id` is a unique identifier supplied for the transaction, that can be used for transaction tracing.  We recommend recording this value when possible, although is it not required.	
+- The `id` is a unique identifier supplied for the transaction, that can be used for transaction tracing.  We recommend recording this value when possible, although is it not required.
+
+----
+
+## Operational Details
+
+### Idempotency
+- `referenceId` is the unique key for a citation in your source system.  Posting the same `referenceId` twice will be rejected as a duplicate, so it can safely be used to retry failed pushes without creating duplicates.
+- `referenceNum` is intentionally **not** deduped — some clients legitimately re-use ticket or notice numbers across years.
+
+### Batch size and rate
+- A single post may contain 1–1000 records.  In practice we recommend **~500 records per post** for citations and Status updates.
+- When using `?storeImages=true` (see [About Images](#about-images) under each endpoint), image fetching happens synchronously during the request.  In that mode we recommend limiting to **~50 records per post** to avoid timeouts.
+- There is no rate limit on the number of posts per minute.
+
+### Image URL handling
+- Without `?storeImages=true`, image URLs are stored as-is and fetched later when letters are being prepared.  The URLs you submit must therefore remain accessible (no expiry, no auth required) for the life of the citation.
+- With `?storeImages=true`, our service downloads each image at submission time and serves them from our own storage thereafter — use this when your URLs are short-lived or behind temporary access tokens.
+
+### Error responses
+A 400 response uses the same JSON shape as a successful response, with details in the `errors` array:
+
+```json
+{
+  "id": "c31deb20-1069-40c8-b218-e7f7e63ba56d",
+  "count": 0,
+  "errors": [
+    { "index": 0, "ref": "AB-123", "error": "Lot 'A007' not found" }
+  ]
+}
+```
+
+- `id` — transaction id; please record this value when reporting issues.
+- `index` — zero-based position of the offending record in your posted array.
+- `ref` — the `referenceId` you supplied for that record (or `null` if not provided).
+- `error` — human-readable error message.
+
+----
+
+## Go-Live Checklist
+
+Before we issue production credentials, we ask that you confirm in sandbox that your integration can perform the table-stakes operations.
+
+- [ ] Successfully POST at least one citation to `/api/citations` (HTTP 200, no errors in the response body).
+- [ ] Successfully POST a Status update on that citation — either `Paid` or `Void`.
+- [ ] Recommended (not gating): receive at least one Payment, Correction, and Closed callback in sandbox.
+
+When moving from sandbox to production, remember:
+- Production credentials are issued separately from sandbox credentials.
+- Production callback URLs must be registered separately — sandbox callback registration does not carry over.
+- The base URL changes from `push.sandbox.parkpliant.com` to `push.parkpliant.com`.
 
 
 

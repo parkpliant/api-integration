@@ -13,7 +13,7 @@ The posting of citations is the basis for our services. See below for details of
 | `issued`               | Yes               | string      |         | `2021-11-11T15:06:00-4:00`        | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local timestamp, including UTC offset, when the citation was issued. |
 | `plate`                | Yes               | string`(uppercase)`      | 20      | `ABC-1234`                        | The license plate for the unpaid vehicle. |
 | `state`                | Yes               | string`(uppercase)`      | 2       | `WA`                              | The state or province that issued the license plate. |
-| `make`                 | No                | string`(uppercase)`      | 50      | `Ford`                            | The make/manufacturer of the unpaid vehicle. Accepts [NCIC VMA Codes](https://wilenet.widoj.gov/sites/default/files/public_files-2021-01/ncic_code_manual_-_dec_31_2020.pdf) or proper names. Surcharges may apply if not provided.  If unknown leave blank or do not submit the element.|
+| `make`                 | Conditional       | string`(uppercase)`      | 50      | `Ford`                            | The make/manufacturer of the unpaid vehicle. Accepts [NCIC VMA Codes](https://wilenet.widoj.gov/sites/default/files/public_files-2021-01/ncic_code_manual_-_dec_31_2020.pdf) or proper names. **Required in practice for LPR-issued notices** (`noticeOnVehicle: false`) — used as a cross-check against the DMV-returned make to catch misread plates before letters are mailed. May be omitted for paper notices left on the vehicle. Surcharges may apply if not provided. |
 | `body`                 | No                | string      | 50      | `Truck`                           | A short term for the body style of the vehicle (e.g., `Truck`, `SUV`, `2-door`, `4-door`). |
 | `color`                | No                | string      | 50      | `Red`                             | The color of the vehicle. |
 | `vin`                  | No                | string`(uppercase)`      | 20      | `*5678`                           | Full vehicle VIN or last 4 digits prefixed with `*`. |
@@ -22,7 +22,8 @@ The posting of citations is the basis for our services. See below for details of
 | `referenceNum`         | No                | string`(uppercase)`      | 50      | `C123456`                         | A reference number for the unpaid vehicle (usually a citation number).  Human-readable for printing on mailer.  If not provided we will create a unique value in our system. |
 | `referenceId`          | Yes                | string`(uppercase)`      | 50      | `6B547-F4684`                     | Internal reference identifier for future updates. Required for [Status](../status) updates. |
 | `violationCode`        | No                | string`(uppercase)`      | 20      | `NP`                              | The violation code in the source system. |
-| `violation`            | Yes               | string      | 50      | `No Advance Payment`              | Human-readable violation description. |
+| `violation`            | Yes               | string      | 50      | `No Advance Payment`              | Human-readable violation description. May be displayed to the parker on the printed letter — review the wording from that perspective. |
+| `noticeOnVehicle`      | Conditional       | bool        |         | `false`                           | Whether a paper notice was left on the vehicle.  **Required for LPR-issued (mailed) notices — must be set to `false`** so the LPR mailing workflow is selected on our side.  See [Mailed (LPR) vs. paper notices](#mailed-lpr-vs-paper-notices) below. |
 | `lotEntryTime`         | No                | string      |         | `2021-11-11T14:39:00-4:00`        | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp when vehicle entered the lot. |
 | `lotExitTime`          | No                | string      |         | `2021-11-11T15:05:00-4:00`        | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp when vehicle exited the lot. |
 | `imageUrls`            | No                | string[]    | 255     | *(below)*                         | Array of internet-accessible URLs for images of the unpaid vehicle. |
@@ -32,7 +33,6 @@ The posting of citations is the basis for our services. See below for details of
 | `group.name`           | No                | string      | 50      | `San Diego`                       | Group/market name for large operator integration (must match Lot). |
 | `schedule[].asOf`      | Conditional       | string      |         | `2021-11-11T15:06:00-4:00`        | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp when scheduled amount becomes effective. |
 | `schedule[].totalDue`  | Conditional       | decimal     |         | `20.00`                           | Total amount due as of the `asOf` timestamp (replacement value, not additive). |
-| `noticeOnVehicle`      | No                | bool        |         |                                   | Indicates if a paper notice was left on the vehicle. |
 | `lot`                  | Conditional       | object      |         |                                   | Lot object (required if `lotCode` not provided). |
 
 ### Lot Object Fields (when using `lot`)
@@ -49,9 +49,14 @@ The posting of citations is the basis for our services. See below for details of
 | `lot.latitude`       | No             | decimal     | -180,180| `47.60621`             | Latitude of the lot. |
 | `lot.longitude`      | No             | decimal     | -180,180| `-112.33207`           | Longitude of the lot. |
 
-### `noticeOnVehicle`
-- `true` = Paper notice left on vehicle
-- `false` = LPR/AE issued notice with no paper notice left on vehicle
+> **Lot details are persisted on first push only.**  The first time we see a given `lot.code` for your account, we create the lot record from the values you supply.  Subsequent citations referencing the same lot (whether via `lotCode` or another `lot` block with the same code) do **not** update the lot's stored details.  To change a lot's address, display name, time zone, or coordinates after the fact, use the [Lots](../lots) endpoint.
+
+### Mailed (LPR) vs. paper notices
+
+The value of `noticeOnVehicle` determines which downstream workflow we run for the citation, so it needs to be set correctly on every push.
+
+- **`noticeOnVehicle: true`** — A paper notice was left on the vehicle at the time of the violation.  We treat the paper notice as the primary parker-facing communication and as the dispute-defensibility evidence.  Image URLs and Make are recommended but not strictly required.
+- **`noticeOnVehicle: false`** — No paper notice was left.  This is the **LPR / mailed notice** path: we run a DMV plate lookup, validate the returned make against the `make` you supplied (which is why Make is effectively required here — see the field description above), and prepare a series of letters to the registered owner.  Because there is no paper notice on the windshield, `imageUrls` are the only dispute-defensibility evidence on the record and need to be supplied and accessible (see [About Images](#about-images) below).
 
 ### Example
 ```yaml
