@@ -21,10 +21,28 @@ Updates the status of a previously posted citation. Any status other than `Open`
 
 ### When to use each `newStatus`
 
-- **`Open`** — the citation is active and eligible for processing.  Most often used to reopen a previously held citation, or paired with an updated `amountDue` to adjust the balance — see [Adjusting `amountDue`](#adjusting-amountdue) below.
+- **`Open`** — the citation is active and eligible for processing.  Used to **release a citation from `Hold`**, or paired with an updated `amountDue` to adjust the balance — see [Adjusting `amountDue`](#adjusting-amountdue) below.  Note this only works on a citation that is still active; it **cannot** revive a citation that has already been settled as `Paid` or `Void` (see [Terminal states](#terminal-states-and-allowed-transitions)).
 - **`Hold`** — pause processing of the citation without closing it.  Use this when something is in review on your side and you want to temporarily stop the mail campaign without voiding the notice.
 - **`Paid`** — the citation has been paid in full.  Most parker payments flow through the Parkpliant payment portal and surface to your system via the [Payment callback](../callbacks#payment) — use `Paid` here when a payment is settled directly in your system instead.  Include `paidAmount` or `payments[]` to record the payment detail.
 - **`Void`** — the citation should no longer be processed and will not be mailed.  Use this when a citation was issued in error, or when re-validation after a [Correction callback](../callbacks#correction) reveals that the corrected plate had a valid parking session.  Pushing `Void` within the 1-hour pause window after a Correction callback is what prevents an erroneous mailer from going out.
+
+### Terminal states and allowed transitions
+
+`Paid` and `Void` are **terminal**.  Once a citation is settled as `Paid` (closed) or `Void`, further Status updates against it are rejected with the error `Citation already Closed or Voided`.  There is no API path to reopen a closed or voided citation — if one was settled in error, contact your account representative.
+
+Practically, that means:
+
+| Current state | `Open` | `Hold` | `Paid` | `Void` |
+|---------------|:------:|:------:|:------:|:------:|
+| **Open**  | adjust amount | ✅ | ✅ | ✅ |
+| **Hold**  | ✅ release | — | ✅ | ✅ |
+| **Paid**  | ❌ | ❌ | ❌ | ❌ |
+| **Void**  | ❌ | ❌ | ❌ | ❌ |
+
+Other notes:
+- An update that would not change anything (same status and same `amountDue`) is accepted but silently ignored — it does **not** count as an error and does **not** appear in the `errors` array.
+- A citation that has been forwarded to a collection agency cannot have its balance **increased** via Status — that returns `Cannot increase AmountDue for Citation in Collection`.  Decreases (e.g. recording a payment) are still allowed.
+- If the `referenceId` does not match a citation for your account, the record returns the error `Citation not found`.
 
 ### Adjusting `amountDue`
 

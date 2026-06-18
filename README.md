@@ -26,7 +26,10 @@ Typical order of operations for a new integration:
 2. **Register lots** via [POST /lots](lots), or include a `lot` object on the first citation for that lot.  A lot must exist (in either form) before its first citation is accepted.
 3. **Push citations** via [POST /citations](citations).
 4. **Send Status updates** via [POST /status](status) when the state of a citation changes in your system (paid, voided, amount adjusted, on hold, etc.).
-5. **Handle inbound callbacks** for events that occur on our side.  At minimum we recommend implementing the **Payment**, **Correction**, and **Closed** callbacks — see [Callbacks](callbacks) for the full list and recommended-minimum guidance.
+5. **Update fee schedules** *(optional)* via [POST /schedules](schedules) if you need to add, change, or clear a citation's early-payment/escalation schedule after it has been posted.
+6. **Handle inbound callbacks** for events that occur on our side.  At minimum we recommend implementing the **Payment**, **Correction**, and **Closed** callbacks — see [Callbacks](callbacks) for the full list and recommended-minimum guidance.
+
+Optionally, you can **look up the current state of a citation** at any time via [GET /query](query) — useful for reconciliation (confirming a citation exists on our side, checking its current status, balance, images, or fee history).
 
 ----
 
@@ -47,6 +50,10 @@ https://push.parkpliant.com/api/citations
 **Status Post Service**
 
 https://push.parkpliant.com/api/status
+
+**Schedules Post Service**
+
+https://push.parkpliant.com/api/schedules
 
 **Lots Post Service**
 
@@ -78,16 +85,16 @@ Accept: application/json, text/json
 
 [{
     "lotCode": "A007",
-    "issued": "2021-11-11T15:06:00-4:00",
+    "issued": "2021-11-11T15:06:00-04:00",
     "plate": "ABC1234",
     "state": "WA",
     "make": "FORD",
     "noticeOnVehicle": true,
-    "amountdue": 10.00,
+    "amountDue": 10.00,
     "violation": "Overtime"
 },{
     "lotCode": "A007",
-    "issued": "2021-11-01T02:00:00-7:00",
+    "issued": "2021-11-01T02:00:00-07:00",
     "plate": "BCE1234",
     "state": "AZ",
     "make": "TOYOTA",
@@ -102,11 +109,11 @@ Accept: application/json, text/json
         "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
     },
     "schedule": [
-        { "asOf": "2021-11-01T02:00:00-7:00", "totalDue": 42.00 },
-        { "asOf": "2021-11-31T02:00:00-7:00", "totalDue": 57.00 }
+        { "asOf": "2021-11-01T02:00:00-07:00", "totalDue": 42.00 },
+        { "asOf": "2021-11-30T02:00:00-07:00", "totalDue": 57.00 }
     ]
 },{
-    "issued": "2021-12-10T22:00:00-6:00",
+    "issued": "2021-12-10T22:00:00-06:00",
     "plate": "CAF132",
     "state": "ID",
     "make": "GMC",
@@ -122,16 +129,16 @@ Accept: application/json, text/json
         "https://blob.azure.com/my-company/unpaid/img84279.jpg"
     ],
     "schedule": [
-        { "asOf": "2021-12-25T22:00:00-6:00", "totalDue": 65.00 },
-        { "asOf": "2022-01-25T22:00:00-6:00", "totalDue": 95.00 }
+        { "asOf": "2021-12-25T22:00:00-06:00", "totalDue": 65.00 },
+        { "asOf": "2022-01-25T22:00:00-06:00", "totalDue": 95.00 }
     ],
         "lot": {
             "code": "FL1012",
             "displayName": "2th and Vine",
-            "Address": "1375 East 2th Street",
-            "City": "Cleveland",
-            "State": "OH",
-            "Zip": "44113",
+            "address": "1375 East 2th Street",
+            "city": "Cleveland",
+            "state": "OH",
+            "zip": "44113",
             "ianaTimezone": "America/New_York"
         }
 }]
@@ -161,13 +168,17 @@ In the above example:
 
 ## Operational Details
 
+### Field naming
+- JSON property names are matched **case-insensitively**.  `amountDue`, `amountdue`, and `AmountDue` are all accepted.  This documentation uses camelCase throughout, and we recommend you do the same for readability.
+- Property **values** (e.g. `state`, plate text) are stored as supplied except where noted; status values (`Open`/`Hold`/`Paid`/`Void`) are likewise matched case-insensitively.
+
 ### Idempotency
-- `referenceId` is the unique key for a citation in your source system.  Posting the same `referenceId` twice will be rejected as a duplicate, so it can safely be used to retry failed pushes without creating duplicates.
+- `referenceId` is the unique key for a citation in your source system.  Posting the same `referenceId` twice returns an error array indicating a duplicate violation, so it can safely be used to retry failed pushes without creating duplicates. **On retry, treat a "duplicate violation" as confirmation the original push succeeded — not as a failure**
 - `referenceNum` is intentionally **not** deduped — some clients legitimately re-use ticket or notice numbers across years.
 
 ### Batch size and rate
 - A single post may contain 1–1000 records.  In practice we recommend **~500 records per post** for citations and Status updates.
-- When using `?storeImages=true` (see [About Images](#about-images) under each endpoint), image fetching happens synchronously during the request.  In that mode we recommend limiting to **~50 records per post** to avoid timeouts.
+- When using `?storeImages=true` (see [About Images](citations#about-images) under the Citations endpoint), image fetching happens synchronously during the request.  In that mode we recommend limiting to **~50 records per post** to avoid timeouts.
 - There is no rate limit on the number of posts per minute.
 
 ### Image URL handling

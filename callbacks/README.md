@@ -2,6 +2,9 @@
 
 This service allows you to post callback URLs and an optional Authorization header for updates.
 
+> **⚠️ POST replaces your entire configuration — it is not a partial update.**
+> Each POST overwrites *all* callback settings for your account with exactly what you send.  Any field you omit (or send as `null`) is **cleared**, including the `authorization` header.  To change one URL, always send your complete configuration with the new value, not just the field you are changing.  You can retrieve your current configuration first with [GET /callbacks](#retrieving-the-current-configuration) to use as a base.
+
 ### Fields
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
 |-------|----------|-------------|---------|---------|------------|
@@ -28,6 +31,42 @@ This service allows you to post callback URLs and an optional Authorization head
   "disputeUrl": null,
   "reassignmentUrl": null,
   "workedUrl": "https://my.uri.net/worked",
+  "undeliverableUrl": "https://my.uri.net/undeliverable"
+}
+```
+
+---
+
+# Retrieving the current configuration
+
+A `GET` against the same endpoint returns your account's currently stored callback configuration.
+
+- **Method:** `GET`
+- **Authentication:** Basic authentication (same credentials as the POST).
+- **`200 OK`** — returns the stored configuration as a JSON object, in the same shape as the POST body.
+- **`204 No Content`** — no callback configuration has been set for your account yet.
+
+The `mailDataUrl` is managed internally and is **not** returned by this endpoint (see [Mail Data Callback](mail-data.md)).
+
+### Example
+
+```
+GET /api/callbacks HTTP/1.1
+Host: push.parkpliant.com
+Authorization: Basic <base64(username:password)>
+Accept: application/json
+```
+
+```json
+{
+  "authorization": "Basic dXNlcjpwYXNz",
+  "correctionUrl": "https://my.uri.net/correct",
+  "paymentUrl": "https://my.uri.net/pay",
+  "noticeUrl": "https://my.uri.net/notice",
+  "disputeUrl": null,
+  "reassignmentUrl": null,
+  "workedUrl": "https://my.uri.net/worked",
+  "closedUrl": null,
   "undeliverableUrl": "https://my.uri.net/undeliverable"
 }
 ```
