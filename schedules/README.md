@@ -20,7 +20,7 @@ For the underlying schedule mechanics (how and when entries are applied, how the
 
 - **Immediate application:** after the schedule is saved, the most recent entry whose `asOf` is now or in the past is applied right away, setting the citation's current amount due.  Entries with a future `asOf` are applied automatically within an hour of that time.
 - **Empty schedule:** sending `[]` deletes all existing entries.  The current amount due is left as-is (no past/now entry is applied).
-- **Terminal citations:** a citation that is already `Paid`/closed or `Void` is rejected with `Citation already closed` (see [Status terminal states](../status#terminal-states-and-allowed-transitions)).
+- **Terminal citations:** a citation that is already `Paid`/closed or `Void` is rejected with `Citation already Closed or Voided` (see [Status terminal states](../status#terminal-states-and-allowed-transitions)).
 - **In collections:** a citation forwarded to a collection agency cannot have its schedule altered — that returns `Cannot alter schedule for Citation in Collection`.
 - **Not found:** if the `referenceId` does not match a citation for your account, the record returns `Citation not found`.
 
@@ -59,4 +59,4 @@ In the above example the first citation's schedule is replaced with two entries,
 
 - `id` — transaction id; please record this value when reporting issues.
 - `count` — the number of citations whose schedules were updated.
-- `errors` — an array of per-record errors (same shape as the other endpoints); see [Error responses](..#error-responses).
+- `errors` — an array of per-record errors (same shape as the other endpoints); see [Error responses](../#error-responses).
