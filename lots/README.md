@@ -17,15 +17,12 @@ The advance posting of lots is required to process Citations.  See below for the
 | `signImageUrls` | No | string [] |255| *(below)* | An array of internet accessible URLs for images of the signage posted in the location. |
 | `group.id` | No | string |50| `825` | A short identifier for the group/market for large operator integration. |
 | `group.name` | No | string |50| `San Diego` | The name for the group/market for large operator integration. |
+| `enableSms` | No | bool || `true` | If supplied, enables (`true`) or disables (`false`) SMS notifications for this lot.  Omit the field to leave the current setting unchanged. |
 
 ### Example
 
 ```yaml
 [{
-    "code": "A007",
-    "displayName": "1st & Pine",
-    "ianaTimezone": "America/Chicago"
-},{
     "code": "Q301",
     "displayName": "34th & Vine",
     "address": "123 N 34th St",
@@ -35,7 +32,7 @@ The advance posting of lots is required to process Citations.  See below for the
     "ianaTimezone": "America/Los_Angeles",
     "signImageUrls": [
       "https://my.website.net/lot/a007/sign.jpg"
-    ]
+    ],
     "group": {
         "id": "825",
         "name": "San Diego"
@@ -44,4 +41,4 @@ The advance posting of lots is required to process Citations.  See below for the
 ```
 
 ### About Images
-Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to immediacy download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.
+Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to immediately download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.

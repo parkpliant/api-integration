@@ -19,6 +19,10 @@ This callback is **not configurable through the public callback configuration AP
 
 The same `authorization` header configured for your other callbacks will be used for Mail Data callbacks. All standard [operational contract](README.md#operational-contract) behavior (batching, retry, frequency) applies.
 
+## Reporting results back
+
+After you generate and mail the letters described by this callback, you report the outcome back through the restricted [Letters](../letters) endpoint — either attaching the rendered PDF or reporting a status (e.g. undeliverable), keyed by the `letter_id` from this payload.  Like this callback, that endpoint is enabled per-account and is not part of the general integration flow.
+
 ## Payload
 
 We will post a JSON Array of mail data records when mailing letters are prepared with complete violation and recipient data.

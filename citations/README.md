@@ -13,16 +13,19 @@ The posting of citations is the basis for our services. See below for details of
 | `issued`               | Yes               | string      |         | `2021-11-11T15:06:00-4:00`        | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) local timestamp, including UTC offset, when the citation was issued. |
 | `plate`                | Yes               | string`(uppercase)`      | 20      | `ABC-1234`                        | The license plate for the unpaid vehicle. |
 | `state`                | Yes               | string`(uppercase)`      | 2       | `WA`                              | The state or province that issued the license plate. |
-| `make`                 | No                | string`(uppercase)`      | 50      | `Ford`                            | The make/manufacturer of the unpaid vehicle. Accepts [NCIC VMA Codes](https://wilenet.widoj.gov/sites/default/files/public_files-2021-01/ncic_code_manual_-_dec_31_2020.pdf) or proper names. Surcharges may apply if not provided.  If unknown leave blank or do not submit the element.|
+| `make`                 | Conditional       | string`(uppercase)`      | 50      | `Ford`                            | The make/manufacturer of the unpaid vehicle. Accepts [NCIC VMA Codes](https://wilenet.widoj.gov/sites/default/files/public_files-2021-01/ncic_code_manual_-_dec_31_2020.pdf) or proper names. **Required in practice for LPR-issued notices** (`noticeOnVehicle: false`) — used as a cross-check against the DMV-returned make to catch misread plates before letters are mailed. May be omitted for paper notices left on the vehicle. Surcharges may apply if not provided. |
 | `body`                 | No                | string      | 50      | `Truck`                           | A short term for the body style of the vehicle (e.g., `Truck`, `SUV`, `2-door`, `4-door`). |
 | `color`                | No                | string      | 50      | `Red`                             | The color of the vehicle. |
 | `vin`                  | No                | string`(uppercase)`      | 20      | `*5678`                           | Full vehicle VIN or last 4 digits prefixed with `*`. |
-| `unpaidParking`        | No                | decimal     | 0.01–9999 | `10.00`                          | The unpaid amount of the parking charges. |
+| `unpaidParking`        | No                | decimal     | 0–9999  | `10.00`                          | The unpaid amount of the parking charges. |
 | `amountDue`            | Yes               | decimal     | 0.01–9999.99 | `20.00`                      | The total amount due on this citation. |
-| `referenceNum`         | No                | string`(uppercase)`      | 50      | `C123456`                         | A reference number for the unpaid vehicle (usually a citation number).  Human-readable for printing on mailer.  If not provided we will create a unique value in our system. |
-| `referenceId`          | Yes                | string`(uppercase)`      | 50      | `6B547-F4684`                     | Internal reference identifier for future updates. Required for [Status](../status) updates. |
+| `referenceNum`         | No (recommended)  | string`(uppercase)`      | 50      | `C123456`                         | A human-readable reference number for the citation (usually the citation/ticket number).  **Printed on the mailed letter and used by the parker to look up and pay online.**  If not provided we generate a synthetic placeholder (`T-<id>`) — see the warning below before relying on this. |
+| `referenceId`          | Recommended       | string`(uppercase)`      | 50      | `6B547-F4684`                     | Internal reference identifier from your source system.  Optional at submission, but **required** to send any later [Status](../status) or [Images](../images) update for this citation, and it is the key we use for duplicate detection (see [Idempotency](..#idempotency)).  If omitted you will not be able to update the citation later. |
 | `violationCode`        | No                | string`(uppercase)`      | 20      | `NP`                              | The violation code in the source system. |
-| `violation`            | Yes               | string      | 50      | `No Advance Payment`              | Human-readable violation description. |
+| `violation`            | Yes               | string      | 50      | `No Advance Payment`              | Human-readable violation description. May be displayed to the parker on the printed letter — review the wording from that perspective. |
+| `employee`             | No                | string      | 50      | `J. Rivera`                       | Identifier or name of the employee/officer who issued the citation. |
+| `employeeCode`         | No                | string      | 20      | `B-4417`                          | Short code or badge number for the employee/officer who issued the citation. |
+| `noticeOnVehicle`      | Conditional       | bool        |         | `false`                           | Whether a paper notice was left on the vehicle.  **Required for LPR-issued (mailed) notices — must be set to `false`** so the LPR mailing workflow is selected on our side.  See [Mailed (LPR) vs. paper notices](#mailed-lpr-vs-paper-notices) below. |
 | `lotEntryTime`         | No                | string      |         | `2021-11-11T14:39:00-4:00`        | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp when vehicle entered the lot. |
 | `lotExitTime`          | No                | string      |         | `2021-11-11T15:05:00-4:00`        | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp when vehicle exited the lot. |
 | `imageUrls`            | No                | string[]    | 255     | *(below)*                         | Array of internet-accessible URLs for images of the unpaid vehicle. |
@@ -32,8 +35,12 @@ The posting of citations is the basis for our services. See below for details of
 | `group.name`           | No                | string      | 50      | `San Diego`                       | Group/market name for large operator integration (must match Lot). |
 | `schedule[].asOf`      | Conditional       | string      |         | `2021-11-11T15:06:00-4:00`        | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp when scheduled amount becomes effective. |
 | `schedule[].totalDue`  | Conditional       | decimal     |         | `20.00`                           | Total amount due as of the `asOf` timestamp (replacement value, not additive). |
-| `noticeOnVehicle`      | No                | bool        |         |                                   | Indicates if a paper notice was left on the vehicle. |
 | `lot`                  | Conditional       | object      |         |                                   | Lot object (required if `lotCode` not provided). |
+
+> **⚠️ Supply `referenceNum` whenever your source system has one.**
+> The `referenceNum` is the human-readable number **printed on the mailed letter**, and it is what a parker types into the payment website to find and pay their citation.
+> If you omit it, we generate a synthetic placeholder of the form `T-<internal id>`.  That placeholder *will* be printed on the letter, but it **will not match any record in your payment system**, so the parker cannot pay online by citation number.  They will only be able to pay if your payment site also supports lookup by **license plate**.
+> Only omit `referenceNum` if you have intentionally designed your payment flow around plate lookups.
 
 ### Lot Object Fields (when using `lot`)
 
@@ -49,25 +56,30 @@ The posting of citations is the basis for our services. See below for details of
 | `lot.latitude`       | No             | decimal     | -180,180| `47.60621`             | Latitude of the lot. |
 | `lot.longitude`      | No             | decimal     | -180,180| `-112.33207`           | Longitude of the lot. |
 
-### `noticeOnVehicle`
-- `true` = Paper notice left on vehicle
-- `false` = LPR/AE issued notice with no paper notice left on vehicle
+> **Lot details are persisted on first push only.**  The first time we see a given `lot.code` for your account, we create the lot record from the values you supply.  Subsequent citations referencing the same lot (whether via `lotCode` or another `lot` block with the same code) do **not** update the lot's stored details.  To change a lot's address, display name, time zone, or coordinates after the fact, use the [Lots](../lots) endpoint.
+
+### Mailed (LPR) vs. paper notices
+
+The value of `noticeOnVehicle` determines which downstream workflow we run for the citation, so it needs to be set correctly on every push.
+
+- **`noticeOnVehicle: true`** — A paper notice was left on the vehicle at the time of the violation.  We treat the paper notice as the primary parker-facing communication and as the dispute-defensibility evidence.  Image URLs and Make are recommended but not strictly required.
+- **`noticeOnVehicle: false`** — No paper notice was left.  This is the **LPR / mailed notice** path: we run a DMV plate lookup, validate the returned make against the `make` you supplied (which is why Make is effectively required here — see the field description above), and prepare a series of letters to the registered owner.  Because there is no paper notice on the windshield, `imageUrls` are the only dispute-defensibility evidence on the record and need to be supplied and accessible (see [About Images](#about-images) below).
 
 ### Example
 ```yaml
 [{
     "lotCode": "A007",
-    "referenceId": "444354357435324",
-    "issued": "2021-11-11T15:06:00-4:00",
+    "referenceId": "111222333444",
+    "issued": "2021-11-11T15:06:00-04:00",
     "plate": "ABC1234",
     "state": "WA",
     "make": "FORD",
     "noticeOnVehicle": true,
-    "amountdue": 10.00,
+    "amountDue": 10.00,
     "violation": "Overtime"
 },{
     "lotCode": "A007",
-    "issued": "2021-11-01T02:00:00-7:00",
+    "issued": "2021-11-01T02:00:00-07:00",
     "plate": "BCE1234",
     "state": "AZ",
     "make": "TOYOTA",
@@ -75,6 +87,7 @@ The posting of citations is the basis for our services. See below for details of
     "body": "Truck",
     "color": "Silver",
     "amountDue": 42.00,
+    "referenceNum": "A123456",
     "referenceId": "444354357435324",
     "violation": "No Advance Payment",
     "imageUrls": [ "https://s3.amazon.com/my-account/image12728.jpg" ],
@@ -82,11 +95,11 @@ The posting of citations is the basis for our services. See below for details of
         "paymentUrl": "https://unpaidparking.net/pay?plate=BCE1234"
     },
     "schedule": [
-        { "asOf": "2021-11-01T02:00:00-7:00", "totalDue": 42.00 },
-        { "asOf": "2021-11-31T02:00:00-7:00", "totalDue": 57.00 }
+        { "asOf": "2021-11-01T02:00:00-07:00", "totalDue": 42.00 },
+        { "asOf": "2021-11-30T02:00:00-07:00", "totalDue": 57.00 }
     ]
 },{
-    "issued": "2021-12-10T22:00:00-6:00",
+    "issued": "2021-12-10T22:00:00-06:00",
     "plate": "CAF132",
     "state": "ID",
     "make": "GMC",
@@ -102,16 +115,16 @@ The posting of citations is the basis for our services. See below for details of
         "https://blob.azure.com/my-company/unpaid/img84279.jpg"
     ],
     "schedule": [
-        { "asOf": "2021-12-25T22:00:00-6:00", "totalDue": 65.00 },
-        { "asOf": "2022-01-25T22:00:00-6:00", "totalDue": 95.00 }
+        { "asOf": "2021-12-25T22:00:00-06:00", "totalDue": 65.00 },
+        { "asOf": "2022-01-25T22:00:00-06:00", "totalDue": 95.00 }
     ],
         "lot": {
             "code": "FL1012",
             "displayName": "2th and Vine",
-            "Address": "1375 East 2th Street",
-            "City": "Cleveland",
-            "State": "OH",
-            "Zip": "44113",
+            "address": "1375 East 2th Street",
+            "city": "Cleveland",
+            "state": "OH",
+            "zip": "44113",
             "ianaTimezone": "America/New_York"
         }
 }]
@@ -122,6 +135,8 @@ The posting of citations is the basis for our services. See below for details of
 Our system expects the image URLs to be internet accessible without authentication. If the URLs you submit are short-lived or use temporary access tokens, you can add `?storeImages=true` on the endpoint URL.  This will cause our service to download the images and store them in our cloud storage.  We also accept [Data URLs](https://developer.mozilla.org/en-US/docs/web/http/basics_of_http/data_urls), for images under 500KB, containing the entire image file.
 
 ### About Schedules
-Schedules are an optional feature that can be used if you offer discounts for early payment, that expire after a period of time.  If you use the schedule feature, then both the `asOf` and `totalDue` are required for each entry.  There is no practical limit for the number of schedule entires supported for a Citation.  Scheduels are applied within an hour of the `asOf` time by our system.  Schedule entries may increase or reduce the amount due.  Any call to *Status*, with a new `amountDue`, will override the amount set by the latest applied schedule, but will not prevent future schedules from being applied.  
+Schedules are an optional feature that can be used if you offer discounts for early payment, that expire after a period of time.  If you use the schedule feature, then both the `asOf` and `totalDue` are required for each entry.  There is no practical limit for the number of schedule entries supported for a Citation.  Schedules are applied within an hour of the `asOf` time by our system.  Schedule entries may increase or reduce the amount due.  Any call to *Status*, with a new `amountDue`, will override the amount set by the latest applied schedule, but will not prevent future schedules from being applied.  
 
-You may supply a schedule entry for the issued date/time of the Citation with the initial amount due, or omit this an send only future changes.  Regardless, the `amountDue` on the Citation must be the currect amout due (with any early pay discounts) as of the time the Citation is sent to us.
+You may supply a schedule entry for the issued date/time of the Citation with the initial amount due, or omit this an send only future changes.  Regardless, the `amountDue` on the Citation must be the current amount due (with any early pay discounts) as of the time the Citation is sent to us.
+
+To add, change, or remove a schedule **after** the citation has been posted, use the [Schedules](../schedules) endpoint, which replaces the citation's entire schedule.
