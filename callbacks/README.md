@@ -12,7 +12,7 @@ This service allows you to post callback URLs and an optional Authorization head
 | `correctionUrl` | No | string |255| `https://my.uri.net/correct` | The absolute URL for us to post citation data corrections to.  See below |
 | `paymentUrl` | No | string |255| `https://my.uri.net/pay` | The absolute URL for us to post citation payment to.  See below |
 | `noticeUrl` | No | string |255| `https://my.uri.net/notice` | The absolute URL for us to post notices of payment due (i.e. Letters and SMS).  See below |
-| `disputeUrl` | No | string |255| `https://my.uri.net/dispute` | The absolute URL for us to post dispute notifications.  See below |
+| `disputeUrl` | No | string |255| `https://my.uri.net/dispute` | The absolute URL for us to post dispute notifications (new disputes and, when enabled, decisions).  See below |
 | `reassignmentUrl` | No | string |255| `https://my.uri.net/reassign` | The absolute URL for us to post reassignments to collection agencies.  See below |
 | `workedUrl` | No | string |255| `https://my.uri.net/worked` | The absolute URL for us to post when starting work on a citation.  See below |
 | `closedUrl` | No | string |255| `https://my.uri.net/closed` | The absolute URL for the webhook handler for *Closed* callbacks.  See below |
@@ -226,7 +226,7 @@ We will post a JSON Array of sent notices (letters and SMS messages) to the park
 ## Dispute
 We will post a JSON Array of disputes submitted by the customer/parker on our dispute portal. Customers may post additional comments and attach files that can be viewed using the URL.
 
-Currently, only `open` (newly created) disputes are sent via callback.  Dispute update/resolution callbacks (with statuses such as `uphold`, `void`, `reduce`, `moot`) may be supported in the future.
+A dispute is posted when it is created, with status `open`.  If [decision callbacks](#dispute-decisions) are enabled for your account, the same dispute is posted again to the same URL when it is decided, with a `decision` field added.
 
 ### Fields
 | Field | Required | Type/Format |Max Len| Example(s) | Description|
@@ -234,12 +234,14 @@ Currently, only `open` (newly created) disputes are sent via callback.  Dispute 
 | `uuid` | Yes | string (uuid) |36| `9649c808-6f06-48d2-...` | The unique identifier for this dispute created by our portal. |
 | `referenceId` | Yes | string |50| `6B547-F4684` | The internal reference identifier, unique to your source, that was supplied with the original Citation post. |
 | `createdUtc` | Yes | string (timestamp) |20| `2023-12-22T13:44:07Z` | An [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) date/time stamp, that the dispute was created.|
-| `status` | Yes | string |10| `open` | The current status of the dispute.  Currently only `open` is sent via callback. |
+| `status` | Yes | string |10| `open` | The current status of the dispute: `open` when created; `upheld`, `reduced` or `void` on a [decision callback](#dispute-decisions). |
 | `reason` | Yes | string |255| `Already_Paid` | A code indicating a common dispute reason, options are `Not_My_Car`, `Already_Paid`, `Waived`, `Permit`, `Machine_Broken`, `Other`. |
 | `text` | No | string |1024|| The full comment entered by the customer when the dispute was submitted. |
-| `privateUrl` | Yes | string |255| `https://dispute.net/1234567` | A URL for operator staff to view, comment and resolve the dispute. *DO NOT SHARE WITH CUSTOMER*. |
+| `privateUrl` | Yes | string |255| `https://dispute.net/1234567` | A URL for operator staff to view and comment on the dispute. *DO NOT SHARE WITH CUSTOMER*. |
 | `customer.name` | No | string |50| `John Doe` | The name submitted by the customer when creating the dispute. |
 | `customer.email` | No | string |255| `johndoe@gmail.com` | The email address submitted by the customer when creating the dispute. |
+| `decision` | No | string |10| `Uphold` | Sent only on a [decision callback](#dispute-decisions): `Uphold`, `Reduce` or `Void`.  Never present when the dispute is first posted. |
+| `reduceToAmount` | No | decimal |-9999,9999| `25.00` | Sent only when `decision` is `Reduce`: the **new amount due** on the citation (not the amount taken off).  May be `null` if the citation was already paid, voided or closed when the decision was made. |
 
 ### Example
 
@@ -256,6 +258,44 @@ Currently, only `open` (newly created) disputes are sent via callback.  Dispute 
     "name": "John Doe",
     "email": "johndoe@gmail.com"
   }
+}]
+```
+
+### Dispute Decisions
+When a dispute is decided, we post it again to your `disputeUrl` with the same fields as above, the new `status`, and a `decision`.
+
+- **Enabled per account.**  Decision callbacks are off by default, so existing integrations see no change.  They are not configurable through the callback configuration API (a `POST` does not change them); contact your account representative to enable them.
+- **Telling a decision from a new dispute.**  A decision callback always has a `decision` field and a `status` other than `open`; a new dispute never has `decision`.  Match it to the dispute you received earlier by `uuid`.
+- **Decisions can change.**  If a decision is changed (for example from `Uphold` to `Reduce`), the dispute is posted again.  Treat the most recent callback for a `uuid` as the current decision.  The same decision may occasionally be posted more than once, so handle repeats idempotently.
+- **Only disputes you were sent.**  A decision is posted only for a dispute whose `open` callback was delivered to you.
+
+| `decision` | `status` | Meaning |
+|------------|----------|---------|
+| `Uphold` | `upheld` | The citation stands; the amount due is unchanged. |
+| `Reduce` | `reduced` | The amount due was reduced to `reduceToAmount`. |
+| `Void` | `void` | The citation was voided; nothing is due. |
+
+No decision callback is sent when:
+- the dispute becomes moot because the citation was paid, voided or closed by other means (you receive the corresponding [Payment](#payment), [Correction](#correction) or [Closed](#closed) callback instead);
+- the citation has been reassigned to a collection agency (see [Reassignment](#reassignment)).
+
+#### Decision Example
+
+```json
+[{
+  "uuid": "9649c808-6f06-48d2-a583-7cdcb1d2654d",
+  "referenceId": "6C558-F5692",
+  "createdUtc": "2023-12-22T13:44:07Z",
+  "status": "reduced",
+  "reason": "Already_Paid",
+  "text": "I paid via the mobile app when I parked.",
+  "privateUrl": "https://dispute.net/1234567",
+  "customer": {
+    "name": "John Doe",
+    "email": "johndoe@gmail.com"
+  },
+  "decision": "Reduce",
+  "reduceToAmount": 25.00
 }]
 ```
 
